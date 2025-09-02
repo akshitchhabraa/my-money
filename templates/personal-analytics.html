@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Analytics - My Money</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            padding: 20px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .page-header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        /* Time Period Selector */
+        .time-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 40px;
+        }
+        
+        .time-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
+        .time-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .time-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 968px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Chart Cards */
+        .chart-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee, #a855f7, #f59e0b);
+        }
+        
+        .chart-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-container.small {
+            height: 300px;
+        }
+        
+        /* KPI Cards */
+        .kpi-section {
+            margin-bottom: 40px;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .kpi-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-change {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .kpi-positive { color: #4ade80; }
+        .kpi-negative { color: #f87171; }
+        .kpi-neutral { color: #94a3b8; }
+        
+        /* Secondary Analytics Grid */
+        .secondary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .secondary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Financial Health Score */
+        .health-score-card {
+            text-align: center;
+        }
+        
+        .health-score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px auto;
+            position: relative;
+            border-radius: 50%;
+            background: conic-gradient(#4ade80 0deg, #4ade80 var(--score-deg), rgba(255,255,255,0.2) var(--score-deg), rgba(255,255,255,0.2) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .health-score-inner {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+        
+        .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4ade80;
+        }
+        
+        .score-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .health-recommendations {
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .recommendation-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .recommendation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recommendation-icon {
+            font-size: 1.2rem;
+        }
+        
+        .recommendation-text {
+            flex: 1;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Budget Progress */
+        .budget-item {
+            margin-bottom: 20px;
+        }
+        
+        .budget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .budget-name {
+            font-weight: 600;
+        }
+        
+        .budget-amount {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .budget-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .budget-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .budget-progress.over-budget {
+            background: linear-gradient(90deg, #f59e0b, #f87171);
+        }
+        
+        /* Top Spending Categories */
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .category-item:last-child {
+            border-bottom: none;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .category-info {
+            flex: 1;
+        }
+        
+        .category-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .category-transactions {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .category-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty State */
+        .empty-analytics {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .page-title { font-size: 2.2rem; }
+            .analytics-grid { grid-template-columns: 1fr; }
+            .secondary-grid { grid-template-columns: 1fr; }
+            .time-selector { flex-direction: row; flex-wrap: wrap; }
+            .container { padding: 0 15px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">💰 My Money</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Home</a>
+                <a href="/personal" class="nav-link">📊 Personal</a>
+                <a href="/personal/analytics" class="nav-link active">📈 Analytics</a>
+                <a href="/business" class="nav-link">🏢 Business</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">📈 Personal Analytics</h1>
+            <p class="page-subtitle">Discover insights, track trends, and make smarter financial decisions</p>
+        </div>
+
+        <!-- Time Period Selector -->
+        <div class="time-selector">
+            <button class="time-btn" data-period="7d">Last 7 Days</button>
+            <button class="time-btn active" data-period="30d">Last 30 Days</button>
+            <button class="time-btn" data-period="90d">Last 3 Months</button>
+            <button class="time-btn" data-period="1y">Last Year</button>
+        </div>
+
+        <!-- KPI Section -->
+        <section class="kpi-section">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-label">Average Daily Spending</div>
+                    <div class="kpi-value kpi-neutral" id="avg-daily-spending">₹0.00</div>
+                    <div class="kpi-change" id="daily-spending-change">No data yet</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-label">Monthly Savings Rate</div>
+                    <div class="kpi-value kpi-positive" id="savings-rate">0%</div>
+                    <div class="kpi-change" id="savings-change">Start saving today!</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">🎯</div>
+                    <div class="kpi-label">Budget Adherence</div>
+                    <div class="kpi-value kpi-positive" id="budget-adherence">100%</div>
+                    <div class="kpi-change" id="budget-change">On track</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">📊</div>
+                    <div class="kpi-label">Spending Streak</div>
+                    <div class="kpi-value kpi-neutral" id="spending-streak">0</div>
+                    <div class="kpi-change" id="streak-change">days tracked</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Analytics -->
+        <div class="analytics-grid">
+            <!-- Spending Trend Chart -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    📈 Spending Trends
+                </h3>
+                <div class="chart-container">
+                    <canvas id="spending-trend-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    🥧 Category Breakdown
+                </h3>
+                <div class="chart-container small">
+                    <canvas id="category-pie-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Analytics -->
+        <div class="secondary-grid">
+            <!-- Income vs Expenses -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    ⚖️ Income vs Expenses
+                </h3>
+                <div class="chart-container small">
+                    <canvas id="income-expense-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Financial Health Score -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    ❤️ Financial Health Score
+                </h3>
+                <div class="health-score-card">
+                    <div class="health-score-circle" id="health-score-circle" style="--score-deg: 252deg;">
+                        <div class="health-score-inner">
+                            <div class="score-value" id="health-score">70</div>
+                            <div class="score-label">Good</div>
+                        </div>
+                    </div>
+                    <div class="health-recommendations" id="health-recommendations">
+                        <div class="recommendation-item">
+                            <span class="recommendation-icon">💡</span>
+                            <span class="recommendation-text">Try to save at least 20% of your income</span>
+                        </div>
+                        <div class="recommendation-item">
+                            <span class="recommendation-icon">📊</span>
+                            <span class="recommendation-text">Track your expenses for better insights</span>
+                        </div>
+                        <div class="recommendation-item">
+                            <span class="recommendation-icon">🎯</span>
+                            <span class="recommendation-text">Set monthly budgets for each category</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Progress -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    🎯 Budget Progress
+                </h3>
+                <div id="budget-progress">
+                    <div class="budget-item">
+                        <div class="budget-header">
+                            <span class="budget-name">🍽️ Food & Dining</span>
+                            <span class="budget-amount">₹0 / ₹8,000</span>
+                        </div>
+                        <div class="budget-bar">
+                            <div class="budget-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="budget-item">
+                        <div class="budget-header">
+                            <span class="budget-name">🚗 Transportation</span>
+                            <span class="budget-amount">₹0 / ₹5,000</span>
+                        </div>
+                        <div class="budget-bar">
+                            <div class="budget-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="budget-item">
+                        <div class="budget-header">
+                            <span class="budget-name">🛍️ Shopping</span>
+                            <span class="budget-amount">₹0 / ₹10,000</span>
+                        </div>
+                        <div class="budget-bar">
+                            <div class="budget-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="budget-item">
+                        <div class="budget-header">
+                            <span class="budget-name">🎬 Entertainment</span>
+                            <span class="budget-amount">₹0 / ₹3,000</span>
+                        </div>
+                        <div class="budget-bar">
+                            <div class="budget-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Spending Categories -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    🔝 Top Spending Categories
+                </h3>
+                <div id="top-categories">
+                    <div class="empty-analytics">
+                        <div class="empty-icon">📊</div>
+                        <h3>No spending data yet</h3>
+                        <p>Start adding transactions to see your top categories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        class PersonalAnalytics {
+            constructor() {
+                this.transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                this.currentPeriod = '30d';
+                this.charts = {};
+                
+                this.categoryColors = {
+                    'Food': '#ff6384',
+                    'Transportation': '#36a2eb',
+                    'Shopping': '#ffcd56',
+                    'Entertainment': '#4bc0c0',
+                    'Bills': '#9966ff',
+                    'Health': '#ff9f40',
+                    'Education': '#ff6384',
+                    'Salary': '#4bc0c0',
+                    'Business': '#36a2eb',
+                    'Investment': '#9966ff',
+                    'Other': '#c9cbcf'
+                };
+                
+                this.categoryIcons = {
+                    'Food': '🍽️',
+                    'Transportation': '🚗',
+                    'Shopping': '🛍️',
+                    'Entertainment': '🎬',
+                    'Bills': '💡',
+                    'Health': '⚕️',
+                    'Education': '📚',
+                    'Salary': '💼',
+                    'Business': '🏢',
+                    'Investment': '📈',
+                    'Other': '📋'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.updateAnalytics();
+                this.createCharts();
+            }
+            
+            setupEventListeners() {
+                document.querySelectorAll('.time-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchTimePeriod(e.target.dataset.period);
+                    });
+                });
+                
+                // Listen for transaction updates from other pages
+                window.addEventListener('storage', () => {
+                    this.transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                    this.updateAnalytics();
+                });
+            }
+            
+            switchTimePeriod(period) {
+                this.currentPeriod = period;
+                
+                // Update active button
+                document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-period="${period}"]`).classList.add('active');
+                
+                this.updateAnalytics();
+            }
+            
+            getFilteredTransactions() {
+                const now = new Date();
+                let startDate;
+                
+                switch(this.currentPeriod) {
+                    case '7d':
+                        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case '30d':
+                        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                        break;
+                    case '90d':
+                        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+                        break;
+                    case '1y':
+                        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                        break;
+                    default:
+                        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                }
+                
+                return this.transactions.filter(t => new Date(t.date) >= startDate);
+            }
+            
+            updateAnalytics() {
+                const transactions = this.getFilteredTransactions();
+                this.updateKPIs(transactions);
+                this.updateCharts(transactions);
+                this.updateHealthScore(transactions);
+                this.updateBudgetProgress(transactions);
+                this.updateTopCategories(transactions);
+            }
+            
+            updateKPIs(transactions) {
+                const expenses = transactions.filter(t => t.type === 'expense');
+                const income = transactions.filter(t => t.type === 'income');
+                
+                const totalExpenses = expenses.reduce((sum, t) => sum + t.amount, 0);
+                const totalIncome = income.reduce((sum, t) => sum + t.amount, 0);
+                
+                // Average daily spending
+                const days = this.getDaysInPeriod();
+                const avgDaily = days > 0 ? totalExpenses / days : 0;
+                document.getElementById('avg-daily-spending').textContent = this.formatCurrency(avgDaily);
+                
+                // Savings rate
+                const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100) : 0;
+                document.getElementById('savings-rate').textContent = Math.max(0, savingsRate).toFixed(1) + '%';
+                
+                // Budget adherence (simplified for demo)
+                const budgetAdherence = Math.min(100, Math.max(0, 100 - (totalExpenses / 25000) * 100));
+                document.getElementById('budget-adherence').textContent = budgetAdherence.toFixed(0) + '%';
+                
+                // Spending streak
+                const streak = this.calculateSpendingStreak();
+                document.getElementById('spending-streak').textContent = streak;
+                
+                // Update changes
+                this.updateKPIChanges(transactions);
+            }
+            
+            updateKPIChanges(transactions) {
+                // Simple demo changes - in real app, compare with previous period
+                document.getElementById('daily-spending-change').textContent = 
+                    transactions.length > 0 ? 'Based on recent activity' : 'No data yet';
+                document.getElementById('savings-change').textContent = 
+                    transactions.length > 0 ? 'Keep it up!' : 'Start saving today!';
+                document.getElementById('budget-change').textContent = 'On track';
+                document.getElementById('streak-change').textContent = 'days tracked';
+            }
+            
+            getDaysInPeriod() {
+                switch(this.currentPeriod) {
+                    case '7d': return 7;
+                    case '30d': return 30;
+                    case '90d': return 90;
+                    case '1y': return 365;
+                    default: return 30;
+                }
+            }
+            
+            calculateSpendingStreak() {
+                if (this.transactions.length === 0) return 0;
+                
+                // Simple calculation - days with transactions
+                const dates = [...new Set(this.transactions.map(t => t.date))];
+                return dates.length;
+            }
+            
+            createCharts() {
+                this.createSpendingTrendChart();
+                this.createCategoryPieChart();
+                this.createIncomeExpenseChart();
+            }
+            
+            updateCharts(transactions) {
+                this.updateSpendingTrendChart(transactions);
+                this.updateCategoryPieChart(transactions);
+                this.updateIncomeExpenseChart(transactions);
+            }
+            
+            createSpendingTrendChart() {
+                const ctx = document.getElementById('spending-trend-chart').getContext('2d');
+                this.charts.spendingTrend = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Daily Spending',
+                            data: [],
+                            borderColor: '#4ade80',
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#4ade80',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    callback: function(value) {
+                                        return '₹' + value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateSpendingTrendChart(transactions) {
+                const expenses = transactions.filter(t => t.type === 'expense');
+                const dailySpending = {};
+                
+                expenses.forEach(t => {
+                    const date = t.date;
+                    dailySpending[date] = (dailySpending[date] || 0) + t.amount;
+                });
+                
+                const labels = Object.keys(dailySpending).sort();
+                const data = labels.map(date => dailySpending[date]);
+                
+                this.charts.spendingTrend.data.labels = labels.map(date => 
+                    new Date(date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+                );
+                this.charts.spendingTrend.data.datasets[0].data = data;
+                this.charts.spendingTrend.update();
+            }
+            
+            createCategoryPieChart() {
+                const ctx = document.getElementById('category-pie-chart').getContext('2d');
+                this.charts.categoryPie = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [],
+                            borderWidth: 2,
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    padding: 15,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateCategoryPieChart(transactions) {
+                const expenses = transactions.filter(t => t.type === 'expense');
+                const categoryTotals = {};
+                
+                expenses.forEach(t => {
+                    categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+                });
+                
+                const labels = Object.keys(categoryTotals);
+                const data = Object.values(categoryTotals);
+                const colors = labels.map(label => this.categoryColors[label] || '#c9cbcf');
+                
+                this.charts.categoryPie.data.labels = labels.map(label => 
+                    `${this.categoryIcons[label] || '📋'} ${label}`
+                );
+                this.charts.categoryPie.data.datasets[0].data = data;
+                this.charts.categoryPie.data.datasets[0].backgroundColor = colors;
+                this.charts.categoryPie.update();
+            }
+            
+            createIncomeExpenseChart() {
+                const ctx = document.getElementById('income-expense-chart').getContext('2d');
+                this.charts.incomeExpense = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Income', 'Expenses', 'Savings'],
+                        datasets: [{
+                            data: [0, 0, 0],
+                            backgroundColor: [
+                                'rgba(74, 222, 128, 0.8)',
+                                'rgba(248, 113, 113, 0.8)',
+                                'rgba(34, 211, 238, 0.8)'
+                            ],
+                            borderColor: [
+                                '#4ade80',
+                                '#f87171',
+                                '#22d3ee'
+                            ],
+                            borderWidth: 2,
+                            borderRadius: 10,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    callback: function(value) {
+                                        return '₹' + value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateIncomeExpenseChart(transactions) {
+                const income = transactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const expenses = transactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const savings = Math.max(0, income - expenses);
+                
+                this.charts.incomeExpense.data.datasets[0].data = [income, expenses, savings];
+                this.charts.incomeExpense.update();
+            }
+            
+            updateHealthScore(transactions) {
+                let score = 50; // Base score
+                
+                const income = transactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const expenses = transactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                
+                if (income > 0) {
+                    const savingsRate = (income - expenses) / income;
+                    
+                    // Scoring based on savings rate
+                    if (savingsRate >= 0.3) score = 90; // Excellent
+                    else if (savingsRate >= 0.2) score = 80; // Very Good
+                    else if (savingsRate >= 0.1) score = 70; // Good
+                    else if (savingsRate >= 0) score = 60; // Fair
+                    else score = 30; // Poor
+                    
+                    // Bonus for having transactions (engagement)
+                    if (transactions.length >= 10) score += 5;
+                    if (transactions.length >= 20) score += 5;
+                }
+                
+                score = Math.min(100, Math.max(0, score));
+                
+                const scoreDeg = (score / 100) * 360;
+                document.getElementById('health-score-circle').style.setProperty('--score-deg', scoreDeg + 'deg');
+                document.getElementById('health-score').textContent = score;
+                
+                // Update health label
+                let healthLabel = 'Poor';
+                if (score >= 80) healthLabel = 'Excellent';
+                else if (score >= 70) healthLabel = 'Good';
+                else if (score >= 60) healthLabel = 'Fair';
+                
+                document.querySelector('.score-label').textContent = healthLabel;
+                
+                // Update recommendations based on score
+                this.updateHealthRecommendations(score, income, expenses);
+            }
+            
+            updateHealthRecommendations(score, income, expenses) {
+                const container = document.getElementById('health-recommendations');
+                let recommendations = [];
+                
+                if (score < 60) {
+                    recommendations = [
+                        { icon: '⚠️', text: 'Your expenses are higher than income' },
+                        { icon: '💡', text: 'Review and reduce unnecessary spending' },
+                        { icon: '🎯', text: 'Set strict monthly budgets' }
+                    ];
+                } else if (score < 80) {
+                    recommendations = [
+                        { icon: '📈', text: 'Try to increase your savings rate' },
+                        { icon: '💰', text: 'Look for additional income sources' },
+                        { icon: '🎯', text: 'Set specific financial goals' }
+                    ];
+                } else {
+                    recommendations = [
+                        { icon: '🎉', text: 'Great job managing your finances!' },
+                        { icon: '📊', text: 'Consider investing your savings' },
+                        { icon: '🚀', text: 'You\'re on track for financial success' }
+                    ];
+                }
+                
+                container.innerHTML = recommendations.map(rec => `
+                    <div class="recommendation-item">
+                        <span class="recommendation-icon">${rec.icon}</span>
+                        <span class="recommendation-text">${rec.text}</span>
+                    </div>
+                `).join('');
+            }
+            
+            updateBudgetProgress(transactions) {
+                const expenses = transactions.filter(t => t.type === 'expense');
+                const categorySpending = {};
+                
+                expenses.forEach(t => {
+                    categorySpending[t.category] = (categorySpending[t.category] || 0) + t.amount;
+                });
+                
+                // Default budgets (in real app, this would be user-defined)
+                const budgets = {
+                    'Food': 8000,
+                    'Transportation': 5000,
+                    'Shopping': 10000,
+                    'Entertainment': 3000
+                };
+                
+                Object.keys(budgets).forEach((category, index) => {
+                    const spent = categorySpending[category] || 0;
+                    const budget = budgets[category];
+                    const percentage = Math.min(100, (spent / budget) * 100);
+                    
+                    const budgetItem = document.querySelectorAll('.budget-item')[index];
+                    if (budgetItem) {
+                        const progressBar = budgetItem.querySelector('.budget-progress');
+                        const amountSpan = budgetItem.querySelector('.budget-amount');
+                        
+                        progressBar.style.width = percentage + '%';
+                        amountSpan.textContent = `${this.formatCurrency(spent)} / ${this.formatCurrency(budget)}`;
+                        
+                        if (percentage > 100) {
+                            progressBar.classList.add('over-budget');
+                        } else {
+                            progressBar.classList.remove('over-budget');
+                        }
+                    }
+                });
+            }
+            
+            updateTopCategories(transactions) {
+                const expenses = transactions.filter(t => t.type === 'expense');
+                const categoryData = {};
+                
+                expenses.forEach(t => {
+                    if (!categoryData[t.category]) {
+                        categoryData[t.category] = {
+                            total: 0,
+                            count: 0
+                        };
+                    }
+                    categoryData[t.category].total += t.amount;
+                    categoryData[t.category].count += 1;
+                });
+                
+                const topCategories = Object.entries(categoryData)
+                    .sort(([,a], [,b]) => b.total - a.total)
+                    .slice(0, 5);
+                
+                const container = document.getElementById('top-categories');
+                
+                if (topCategories.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-analytics">
+                            <div class="empty-icon">📊</div>
+                            <h3>No spending data yet</h3>
+                            <p>Start adding transactions to see your top categories</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = topCategories.map(([category, data]) => `
+                    <div class="category-item">
+                        <div class="category-icon" style="background-color: ${this.categoryColors[category] || '#c9cbcf'}20; color: ${this.categoryColors[category] || '#c9cbcf'};">
+                            ${this.categoryIcons[category] || '📋'}
+                        </div>
+                        <div class="category-info">
+                            <div class="category-name">${category}</div>
+                            <div class="category-transactions">${data.count} transaction${data.count !== 1 ? 's' : ''}</div>
+                        </div>
+                        <div class="category-amount" style="color: ${this.categoryColors[category] || '#c9cbcf'};">
+                            ${this.formatCurrency(data.total)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(amount);
+            }
+        }
+        
+        // Initialize analytics when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new PersonalAnalytics();
+        });
+    </script>
+</body>
+</html>

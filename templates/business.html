@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business & Khatabook - My Money</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            padding: 20px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .page-header {
+            text-align: center;
+            padding: 50px 0;
+        }
+        
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        /* Business Tabs */
+        .business-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 50px;
+        }
+        
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+        
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .tab-button:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Dashboard */
+        .kpi-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee, #a855f7, #f59e0b);
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-label {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-change {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        /* Cards Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        @media (max-width: 968px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 40px;
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4ade80, #22d3ee);
+            border: none;
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 222, 128, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Customer List */
+        .customer-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .customer-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .customer-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .customer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .customer-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .customer-details {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .customer-balance {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .balance-positive { color: #4ade80; }
+        .balance-negative { color: #f87171; }
+        .balance-zero { color: #94a3b8; }
+        
+        .customer-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Invoice List */
+        .invoice-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .invoice-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .invoice-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-paid { background: rgba(74, 222, 128, 0.3); color: #4ade80; }
+        .status-pending { background: rgba(245, 158, 11, 0.3); color: #f59e0b; }
+        .status-overdue { background: rgba(248, 113, 113, 0.3); color: #f87171; }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: linear-gradient(135deg, #4ade80, #22d3ee);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .success-message.show {
+            transform: translateX(0);
+        }
+        
+        /* Khatabook Specific */
+        .balance-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .balance-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .balance-card.you-gave {
+            border-left: 4px solid #f87171;
+        }
+        
+        .balance-card.you-got {
+            border-left: 4px solid #4ade80;
+        }
+        
+        /* Transaction History */
+        .transaction-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .transaction-item.credit {
+            border-left: 4px solid #f87171;
+        }
+        
+        .transaction-item.payment {
+            border-left: 4px solid #4ade80;
+        }
+        
+        .transaction-amount.credit {
+            color: #f87171;
+            font-weight: 700;
+        }
+        
+        .transaction-amount.payment {
+            color: #4ade80;
+            font-weight: 700;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .page-title { font-size: 2.5rem; }
+            .kpi-section { grid-template-columns: 1fr; }
+            .business-tabs { flex-direction: column; gap: 5px; }
+            .tab-button { padding: 12px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">💰 My Money</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Home</a>
+				<a href="/personal/analytics" class="nav-link">📈 Personal Analytics</a>
+                <a href="/business/analytics" class="nav-link">📈 Business Analytics</a>
+                <a href="/personal" class="nav-link">📊 Personal</a>
+                <a href="/business" class="nav-link">🏢 Business</a>
+				<a href="/reports" class="nav-link">📋 Reports</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">🏢 Business & Khatabook</h1>
+            <p class="page-subtitle">Manage your business finances and customer relationships like a pro</p>
+        </div>
+
+        <!-- Business Navigation Tabs -->
+        <div class="business-tabs">
+            <button class="tab-button active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="tab-button" data-tab="khatabook">📚 Khatabook</button>
+            <button class="tab-button" data-tab="invoices">📋 Invoices</button>
+            <button class="tab-button" data-tab="reports">📈 Reports</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard-tab">
+            <div class="kpi-section">
+                <div class="kpi-card">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-label">Total Receivables</div>
+                    <div class="kpi-value balance-positive" id="total-receivables">₹0.00</div>
+                    <div class="kpi-change">Money customers owe you</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">💸</div>
+                    <div class="kpi-label">Total Payables</div>
+                    <div class="kpi-value balance-negative" id="total-payables">₹0.00</div>
+                    <div class="kpi-change">Money you owe to others</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-label">Active Customers</div>
+                    <div class="kpi-value balance-zero" id="total-customers">0</div>
+                    <div class="kpi-change">Your customer base</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">📊</div>
+                    <div class="kpi-label">Monthly Revenue</div>
+                    <div class="kpi-value balance-positive" id="monthly-revenue">₹0.00</div>
+                    <div class="kpi-change">This month's earnings</div>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="feature-card">
+                    <h3 class="card-title">🚀 Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <button class="btn-secondary" onclick="switchTab('khatabook')">👥 Add Customer</button>
+                        <button class="btn-secondary" onclick="switchTab('invoices')">📋 Create Invoice</button>
+                        <button class="btn-secondary" onclick="recordTransaction()">💰 Record Payment</button>
+                        <button class="btn-secondary" onclick="generateReport()">📈 Generate Report</button>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="card-title">📈 Recent Activity</h3>
+                    <div id="recent-activity">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <p>No recent business activity</p>
+                            <p style="font-size: 0.9rem; opacity: 0.7;">Start by adding customers or creating invoices</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khatabook Tab -->
+        <div class="tab-content" id="khatabook-tab">
+            <div class="cards-grid">
+                <div class="feature-card">
+                    <h3 class="card-title">👥 Add New Customer</h3>
+                    <form id="customer-form">
+                        <div class="form-group">
+                            <label class="form-label">👤 Customer Name</label>
+                            <input type="text" class="form-control" id="customer-name" placeholder="Enter customer name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📱 Phone Number</label>
+                            <input type="tel" class="form-control" id="customer-phone" placeholder="+91 XXXXX XXXXX">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🏢 Business/Company</label>
+                            <input type="text" class="form-control" id="customer-business" placeholder="Business or company name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📧 Email</label>
+                            <input type="email" class="form-control" id="customer-email" placeholder="customer@email.com">
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">💾 Add Customer</button>
+                    </form>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="card-title">📚 Customer Ledgers</h3>
+                    
+                    <div class="balance-summary">
+                        <div class="balance-card you-gave">
+                            <h4 style="color: #f87171; margin-bottom: 10px;">You Gave (Credit)</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #f87171;" id="total-credit">₹0.00</div>
+                        </div>
+                        <div class="balance-card you-got">
+                            <h4 style="color: #4ade80; margin-bottom: 10px;">You Got (Payment)</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #4ade80;" id="total-payment">₹0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="customer-list" id="customer-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <h3>No customers yet</h3>
+                            <p>Add your first customer to start managing accounts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Transaction Form -->
+            <div class="feature-card" id="transaction-form" style="display: none; margin-top: 30px;">
+                <h3 class="card-title">
+                    <span id="transaction-title">💰 Customer Transaction</span>
+                </h3>
+                
+                <form id="customer-transaction-form">
+                    <div class="form-group">
+                        <label class="form-label">💰 Amount (₹)</label>
+                        <input type="number" class="form-control" id="transaction-amount" placeholder="0.00" min="0.01" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📝 Description</label>
+                        <input type="text" class="form-control" id="transaction-description" placeholder="What was this transaction for?" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">📅 Date</label>
+                        <input type="date" class="form-control" id="transaction-date" required>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button type="submit" class="btn-primary" style="flex: 1;">💾 Save Transaction</button>
+                        <button type="button" class="btn-secondary" onclick="cancelTransaction()" style="flex: 1;">❌ Cancel</button>
+                    </div>
+                    
+                    <input type="hidden" id="transaction-customer-id">
+                    <input type="hidden" id="transaction-type">
+                </form>
+            </div>
+        </div>
+
+        <!-- Invoices Tab -->
+        <div class="tab-content" id="invoices-tab">
+            <div class="cards-grid">
+                <div class="feature-card">
+                    <h3 class="card-title">📋 Create New Invoice</h3>
+                    <form id="invoice-form">
+                        <div class="form-group">
+                            <label class="form-label">👤 Customer</label>
+                            <select class="form-control" id="invoice-customer" required>
+                                <option value="">Select customer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📝 Item/Service Description</label>
+                            <input type="text" class="form-control" id="invoice-description" placeholder="Description of goods or services" required>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label class="form-label">🔢 Quantity</label>
+                                <input type="number" class="form-control" id="invoice-quantity" placeholder="1" min="1" value="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">💰 Rate (₹)</label>
+                                <input type="number" class="form-control" id="invoice-rate" placeholder="0.00" min="0.01" step="0.01" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🧾 GST Rate (%)</label>
+                            <select class="form-control" id="invoice-gst">
+                                <option value="0">0% - No GST</option>
+                                <option value="5">5% - Essential goods</option>
+                                <option value="12">12% - Processed foods</option>
+                                <option value="18" selected>18% - Standard rate</option>
+                                <option value="28">28% - Luxury items</option>
+                            </select>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>Subtotal:</span>
+                                <span id="invoice-subtotal">₹0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span>GST:</span>
+                                <span id="invoice-gst-amount">₹0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
+                                <span>Total:</span>
+                                <span id="invoice-total">₹0.00</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">📧 Create & Send Invoice</button>
+                    </form>
+                </div>
+
+                <div class="feature-card">
+                    <h3 class="card-title">📋 Recent Invoices</h3>
+                    <div id="invoice-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <h3>No invoices yet</h3>
+                            <p>Create your first invoice to get started</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div class="tab-content" id="reports-tab">
+            <div class="kpi-section">
+                <div class="kpi-card">
+                    <div class="kpi-icon">📊</div>
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-value balance-positive" id="report-revenue">₹0.00</div>
+                    <div class="kpi-change">All-time business income</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">🧾</div>
+                    <div class="kpi-label">GST Collected</div>
+                    <div class="kpi-value balance-zero" id="report-gst">₹0.00</div>
+                    <div class="kpi-change">Total tax collected</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-label">Outstanding Amount</div>
+                    <div class="kpi-value balance-negative" id="report-outstanding">₹0.00</div>
+                    <div class="kpi-change">Pending customer payments</div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon">⭐</div>
+                    <div class="kpi-label">Business Health</div>
+                    <div class="kpi-value balance-positive" id="business-health">Excellent</div>
+                    <div class="kpi-change">Overall business status</div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="card-title">📥 Export Reports</h3>
+                <p style="opacity: 0.8; margin-bottom: 25px;">Download your business data in various formats</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <button class="btn-secondary" onclick="exportCustomers()">👥 Customer Report</button>
+                    <button class="btn-secondary" onclick="exportInvoices()">📋 Invoice Report</button>
+                    <button class="btn-secondary" onclick="exportTransactions()">💰 Transaction Report</button>
+                    <button class="btn-secondary" onclick="exportTaxReport()">🧾 Tax Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="success-message">
+        Action completed successfully! 🎉
+    </div>
+
+    <script>
+        // Business & Khatabook App JavaScript
+        class BusinessApp {
+            constructor() {
+                this.customers = JSON.parse(localStorage.getItem('business-customers') || '[]');
+                this.customerTransactions = JSON.parse(localStorage.getItem('customer-transactions') || '[]');
+                this.invoices = JSON.parse(localStorage.getItem('business-invoices') || '[]');
+                this.selectedCustomer = null;
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.setCurrentDate();
+                this.updateAllDisplays();
+                this.setupInvoiceCalculations();
+            }
+            
+            setupEventListeners() {
+                // Tab switching
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const tab = e.target.dataset.tab;
+                        this.switchTab(tab);
+                    });
+                });
+                
+                // Forms
+                document.getElementById('customer-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addCustomer();
+                });
+                
+                document.getElementById('customer-transaction-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveCustomerTransaction();
+                });
+                
+                document.getElementById('invoice-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createInvoice();
+                });
+            }
+            
+            setCurrentDate() {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('transaction-date').value = today;
+            }
+            
+            switchTab(tabName) {
+                // Update buttons
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                if (tabName === 'invoices') {
+                    this.updateCustomerDropdown();
+                }
+            }
+            
+            addCustomer() {
+                const customer = {
+                    id: Date.now(),
+                    name: document.getElementById('customer-name').value.trim(),
+                    phone: document.getElementById('customer-phone').value.trim(),
+                    business: document.getElementById('customer-business').value.trim(),
+                    email: document.getElementById('customer-email').value.trim(),
+                    balance: 0,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.customers.push(customer);
+                this.saveData();
+                this.updateAllDisplays();
+                this.showSuccess(`Customer ${customer.name} added successfully!`);
+                
+                // Reset form
+                document.getElementById('customer-form').reset();
+                
+                // Sync with backend
+                this.syncWithBackend('POST', '/api/customers', customer);
+            }
+            
+            showCustomerTransaction(customerId, type) {
+                this.selectedCustomer = customerId;
+                const customer = this.customers.find(c => c.id === customerId);
+                
+                document.getElementById('transaction-customer-id').value = customerId;
+                document.getElementById('transaction-type').value = type;
+                
+                const title = type === 'credit' ? 
+                    `🔴 Give Credit to ${customer.name}` : 
+                    `🟢 Receive Payment from ${customer.name}`;
+                    
+                document.getElementById('transaction-title').textContent = title;
+                document.getElementById('transaction-form').style.display = 'block';
+                document.getElementById('transaction-amount').focus();
+                
+                // Scroll to form
+                document.getElementById('transaction-form').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            saveCustomerTransaction() {
+                const customerId = parseInt(document.getElementById('transaction-customer-id').value);
+                const type = document.getElementById('transaction-type').value;
+                const amount = parseFloat(document.getElementById('transaction-amount').value);
+                const description = document.getElementById('transaction-description').value.trim();
+                const date = document.getElementById('transaction-date').value;
+                
+                if (!amount || amount <= 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                }
+                
+                if (!description) {
+                    alert('Please enter a description');
+                    return;
+                }
+                
+                const transaction = {
+                    id: Date.now(),
+                    customerId: customerId,
+                    type: type,
+                    amount: amount,
+                    description: description,
+                    date: date,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.customerTransactions.push(transaction);
+                
+                // Update customer balance
+                const customer = this.customers.find(c => c.id === customerId);
+                if (type === 'credit') {
+                    customer.balance += amount; // They owe you more
+                } else {
+                    customer.balance -= amount; // They owe you less
+                }
+                
+                this.saveData();
+                this.updateAllDisplays();
+                this.cancelTransaction();
+                
+                const actionText = type === 'credit' ? 'Credit given' : 'Payment received';
+                this.showSuccess(`${actionText}: ${this.formatCurrency(amount)} for ${customer.name}`);
+                
+                // Sync with backend
+                this.syncWithBackend('POST', `/api/customers/${customerId}/transactions`, transaction);
+            }
+            
+            cancelTransaction() {
+                document.getElementById('transaction-form').style.display = 'none';
+                document.getElementById('customer-transaction-form').reset();
+                this.setCurrentDate();
+            }
+            
+            createInvoice() {
+                const customerId = parseInt(document.getElementById('invoice-customer').value);
+                const description = document.getElementById('invoice-description').value.trim();
+                const quantity = parseFloat(document.getElementById('invoice-quantity').value);
+                const rate = parseFloat(document.getElementById('invoice-rate').value);
+                const gstRate = parseFloat(document.getElementById('invoice-gst').value);
+                
+                if (!customerId) {
+                    alert('Please select a customer');
+                    return;
+                }
+                
+                if (!description || !rate || rate <= 0) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+                
+                const subtotal = quantity * rate;
+                const gstAmount = (subtotal * gstRate) / 100;
+                const total = subtotal + gstAmount;
+                
+                const invoice = {
+                    id: Date.now(),
+                    number: `INV-${new Date().getFullYear()}-${String(this.invoices.length + 1).padStart(3, '0')}`,
+                    customerId: customerId,
+                    description: description,
+                    quantity: quantity,
+                    rate: rate,
+                    subtotal: subtotal,
+                    gstRate: gstRate,
+                    gstAmount: gstAmount,
+                    total: total,
+                    status: 'pending',
+                    date: new Date().toISOString().split('T')[0],
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.invoices.push(invoice);
+                this.saveData();
+                this.updateAllDisplays();
+                
+                // Reset form
+                document.getElementById('invoice-form').reset();
+                document.getElementById('invoice-quantity').value = 1;
+                this.calculateInvoiceTotal();
+                
+                const customer = this.customers.find(c => c.id === customerId);
+                this.showSuccess(`Invoice ${invoice.number} created for ${customer.name}!`);
+            }
+            
+            setupInvoiceCalculations() {
+                const fields = ['invoice-quantity', 'invoice-rate', 'invoice-gst'];
+                fields.forEach(fieldId => {
+                    document.getElementById(fieldId).addEventListener('input', () => {
+                        this.calculateInvoiceTotal();
+                    });
+                });
+            }
+            
+            calculateInvoiceTotal() {
+                const quantity = parseFloat(document.getElementById('invoice-quantity').value) || 0;
+                const rate = parseFloat(document.getElementById('invoice-rate').value) || 0;
+                const gstRate = parseFloat(document.getElementById('invoice-gst').value) || 0;
+                
+                const subtotal = quantity * rate;
+                const gstAmount = (subtotal * gstRate) / 100;
+                const total = subtotal + gstAmount;
+                
+                document.getElementById('invoice-subtotal').textContent = this.formatCurrency(subtotal);
+                document.getElementById('invoice-gst-amount').textContent = this.formatCurrency(gstAmount);
+                document.getElementById('invoice-total').textContent = this.formatCurrency(total);
+            }
+            
+            updateAllDisplays() {
+                this.updateDashboard();
+                this.updateCustomerList();
+                this.updateKhatabookSummary();
+                this.updateInvoiceList();
+                this.updateReports();
+            }
+            
+            updateDashboard() {
+                let totalReceivables = 0;
+                let totalPayables = 0;
+                
+                this.customers.forEach(customer => {
+                    if (customer.balance > 0) {
+                        totalReceivables += customer.balance;
+                    } else if (customer.balance < 0) {
+                        totalPayables += Math.abs(customer.balance);
+                    }
+                });
+                
+                const monthlyRevenue = this.invoices
+                    .filter(inv => {
+                        const invDate = new Date(inv.date);
+                        const currentMonth = new Date().getMonth();
+                        const currentYear = new Date().getFullYear();
+                        return invDate.getMonth() === currentMonth && 
+                               invDate.getFullYear() === currentYear && 
+                               inv.status === 'paid';
+                    })
+                    .reduce((sum, inv) => sum + inv.total, 0);
+                
+                document.getElementById('total-receivables').textContent = this.formatCurrency(totalReceivables);
+                document.getElementById('total-payables').textContent = this.formatCurrency(totalPayables);
+                document.getElementById('total-customers').textContent = this.customers.length;
+                document.getElementById('monthly-revenue').textContent = this.formatCurrency(monthlyRevenue);
+            }
+            
+            updateCustomerList() {
+                const container = document.getElementById('customer-list');
+                
+                if (this.customers.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <h3>No customers yet</h3>
+                            <p>Add your first customer to start managing accounts</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = this.customers.map(customer => {
+                    const balanceClass = customer.balance > 0 ? 'balance-positive' : 
+                                        customer.balance < 0 ? 'balance-negative' : 'balance-zero';
+                    const balanceText = customer.balance > 0 ? 'They owe you' : 
+                                       customer.balance < 0 ? 'You owe them' : 'Balanced';
+                    
+                    return `
+                        <div class="customer-item">
+                            <div class="customer-header">
+                                <div>
+                                    <div class="customer-name">👤 ${customer.name}</div>
+                                    <div class="customer-details">
+                                        ${customer.phone ? `📱 ${customer.phone}` : ''}
+                                        ${customer.business ? ` | 🏢 ${customer.business}` : ''}
+                                    </div>
+                                </div>
+                                <div class="customer-balance ${balanceClass}">
+                                    ${this.formatCurrency(Math.abs(customer.balance))}
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">${balanceText}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="customer-actions">
+                                <button class="btn-secondary" onclick="businessApp.showCustomerTransaction(${customer.id}, 'credit')">
+                                    🔴 Give Credit
+                                </button>
+                                <button class="btn-secondary" onclick="businessApp.showCustomerTransaction(${customer.id}, 'payment')">
+                                    🟢 Get Payment
+                                </button>
+                                <button class="btn-secondary" onclick="businessApp.viewCustomerHistory(${customer.id})">
+                                    📋 View History
+                                </button>
+                            </div>
+                            
+                            ${customer.id === this.selectedCustomer ? this.renderCustomerHistory(customer.id) : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            renderCustomerHistory(customerId) {
+                const transactions = this.customerTransactions
+                    .filter(t => t.customerId === customerId)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                if (transactions.length === 0) {
+                    return `
+                        <div class="transaction-history" style="margin-top: 20px;">
+                            <h4>📋 Transaction History</h4>
+                            <p style="opacity: 0.7;">No transactions yet</p>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="transaction-history" style="margin-top: 20px;">
+                        <h4>📋 Transaction History</h4>
+                        ${transactions.map(t => `
+                            <div class="transaction-item ${t.type}">
+                                <div>
+                                    <div style="font-weight: 600;">${t.description}</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.7;">${this.formatDate(t.date)}</div>
+                                </div>
+                                <div class="transaction-amount ${t.type}">
+                                    ${t.type === 'credit' ? '+' : '-'}${this.formatCurrency(t.amount)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            viewCustomerHistory(customerId) {
+                this.selectedCustomer = this.selectedCustomer === customerId ? null : customerId;
+                this.updateCustomerList();
+            }
+            
+            updateKhatabookSummary() {
+                let totalCredit = 0;
+                let totalPayment = 0;
+                
+                this.customerTransactions.forEach(transaction => {
+                    if (transaction.type === 'credit') {
+                        totalCredit += transaction.amount;
+                    } else {
+                        totalPayment += transaction.amount;
+                    }
+                });
+                
+                document.getElementById('total-credit').textContent = this.formatCurrency(totalCredit);
+                document.getElementById('total-payment').textContent = this.formatCurrency(totalPayment);
+            }
+            
+            updateCustomerDropdown() {
+                const select = document.getElementById('invoice-customer');
+                select.innerHTML = '<option value="">Select customer</option>' + 
+                    this.customers.map(customer => 
+                        `<option value="${customer.id}">${customer.name}</option>`
+                    ).join('');
+            }
+            
+            updateInvoiceList() {
+                const container = document.getElementById('invoice-list');
+                
+                if (this.invoices.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📋</div>
+                            <h3>No invoices yet</h3>
+                            <p>Create your first invoice to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const sortedInvoices = [...this.invoices].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                container.innerHTML = sortedInvoices.map(invoice => {
+                    const customer = this.customers.find(c => c.id === invoice.customerId);
+                    return `
+                        <div class="invoice-item">
+                            <div class="invoice-header">
+                                <div>
+                                    <div class="invoice-number">📋 ${invoice.number}</div>
+                                    <div style="opacity: 0.7; font-size: 0.9rem;">
+                                        👤 ${customer ? customer.name : 'Unknown'} • 📅 ${this.formatDate(invoice.date)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.2rem; font-weight: 700;">${this.formatCurrency(invoice.total)}</div>
+                                    <div class="invoice-status status-${invoice.status}">${invoice.status}</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
+                                ${invoice.description} (${invoice.quantity} × ${this.formatCurrency(invoice.rate)})
+                                ${invoice.gstRate > 0 ? ` + ${invoice.gstRate}% GST` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            updateReports() {
+                const totalRevenue = this.invoices.reduce((sum, inv) => sum + inv.total, 0);
+                const totalGst = this.invoices.reduce((sum, inv) => sum + inv.gstAmount, 0);
+                const outstanding = this.customers.reduce((sum, c) => sum + Math.max(0, c.balance), 0);
+                
+                document.getElementById('report-revenue').textContent = this.formatCurrency(totalRevenue);
+                document.getElementById('report-gst').textContent = this.formatCurrency(totalGst);
+                document.getElementById('report-outstanding').textContent = this.formatCurrency(outstanding);
+                
+                // Business health calculation
+                let health = 'Good';
+                if (outstanding > totalRevenue * 0.3) health = 'Fair';
+                if (outstanding > totalRevenue * 0.5) health = 'Poor';
+                if (totalRevenue === 0) health = 'New';
+                
+                document.getElementById('business-health').textContent = health;
+            }
+            
+            async syncWithBackend(method, url, data = null) {
+                try {
+                    const options = {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' }
+                    };
+                    
+                    if (data && method !== 'DELETE') {
+                        options.body = JSON.stringify(data);
+                    }
+                    
+                    const response = await fetch(url, options);
+                    const result = await response.json();
+                    
+                    if (!result.success && result.success !== undefined) {
+                        console.error('Backend sync failed:', result);
+                    }
+                } catch (error) {
+                    console.log('Backend sync failed - working offline:', error);
+                }
+            }
+            
+            saveData() {
+                localStorage.setItem('business-customers', JSON.stringify(this.customers));
+                localStorage.setItem('customer-transactions', JSON.stringify(this.customerTransactions));
+                localStorage.setItem('business-invoices', JSON.stringify(this.invoices));
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    minimumFractionDigits: 2
+                }).format(amount);
+            }
+            
+            formatDate(dateString) {
+                return new Date(dateString).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+            
+            showSuccess(message) {
+                const successEl = document.getElementById('success-message');
+                successEl.textContent = message;
+                successEl.classList.add('show');
+                setTimeout(() => successEl.classList.remove('show'), 3000);
+            }
+        }
+        
+        // Export functions
+        function exportCustomers() {
+            const customers = JSON.parse(localStorage.getItem('business-customers') || '[]');
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Name,Phone,Business,Email,Balance\n"
+                + customers.map(c => 
+                    `"${c.name}","${c.phone}","${c.business}","${c.email}",${c.balance}`
+                ).join('\n');
+            
+            downloadCSV(csvContent, 'customers-report.csv');
+        }
+        
+        function exportInvoices() {
+            const invoices = JSON.parse(localStorage.getItem('business-invoices') || '[]');
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Invoice Number,Date,Customer ID,Description,Amount,GST,Total,Status\n"
+                + invoices.map(i => 
+                    `"${i.number}","${i.date}",${i.customerId},"${i.description}",${i.subtotal},${i.gstAmount},${i.total},"${i.status}"`
+                ).join('\n');
+            
+            downloadCSV(csvContent, 'invoices-report.csv');
+        }
+        
+        function exportTransactions() {
+            const transactions = JSON.parse(localStorage.getItem('customer-transactions') || '[]');
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Date,Customer ID,Type,Amount,Description\n"
+                + transactions.map(t => 
+                    `"${t.date}",${t.customerId},"${t.type}",${t.amount},"${t.description}"`
+                ).join('\n');
+            
+            downloadCSV(csvContent, 'transactions-report.csv');
+        }
+        
+        function exportTaxReport() {
+            const invoices = JSON.parse(localStorage.getItem('business-invoices') || '[]');
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Invoice Number,Date,Subtotal,GST Rate,GST Amount,Total\n"
+                + invoices.map(i => 
+                    `"${i.number}","${i.date}",${i.subtotal},${i.gstRate}%,${i.gstAmount},${i.total}`
+                ).join('\n');
+            
+            downloadCSV(csvContent, 'tax-report.csv');
+        }
+        
+        function downloadCSV(csvContent, filename) {
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function switchTab(tabName) {
+            businessApp.switchTab(tabName);
+        }
+        
+        function recordTransaction() {
+            switchTab('khatabook');
+        }
+        
+        function generateReport() {
+            switchTab('reports');
+        }
+        
+        // Initialize app
+        const businessApp = new BusinessApp();
+    </script>
+</body>
+</html>

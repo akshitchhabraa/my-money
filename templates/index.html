@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Money - Take Control of Your Finances</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="a"><stop offset="0" stop-color="%23fff" stop-opacity=".1"/><stop offset="1" stop-color="%23fff" stop-opacity="0"/></radialGradient></defs><circle cx="20" cy="20" r="2" fill="url(%23a)"><animate attributeName="cy" values="20;80;20" dur="3s" repeatCount="indefinite"/></circle><circle cx="80" cy="80" r="2" fill="url(%23a)"><animate attributeName="cy" values="80;20;80" dur="4s" repeatCount="indefinite"/></circle><circle cx="40" cy="60" r="1" fill="url(%23a)"><animate attributeName="cx" values="40;60;40" dur="2s" repeatCount="indefinite"/></circle></svg>') repeat;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .header {
+            padding: 60px 0 40px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f8ff, #e6f3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(255,255,255,0.3);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 4px 20px rgba(255,255,255,0.3); }
+            to { text-shadow: 0 4px 30px rgba(255,255,255,0.6); }
+        }
+        
+        .tagline {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 15px;
+            opacity: 0.95;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            line-height: 1.7;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Stats Banner */
+        .stats-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out 0.6s both;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(74, 222, 128, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        /* Main Selection */
+        .selection-section {
+            padding: 60px 0;
+        }
+        
+        .selection-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            animation: slideUp 0.8s ease-out 0.8s both;
+        }
+        
+        .selection-subtitle {
+            font-size: 1.3rem;
+            text-align: center;
+            opacity: 0.85;
+            margin-bottom: 60px;
+            animation: slideUp 0.8s ease-out 1s both;
+        }
+        
+        .option-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
+            .option-cards {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .logo { font-size: 3rem; }
+            .tagline { font-size: 1.4rem; }
+            .selection-title { font-size: 2.2rem; }
+        }
+        
+        .option-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 30px;
+            padding: 50px 40px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: white;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out calc(1.2s + var(--delay, 0s)) both;
+        }
+        
+        .option-card:nth-child(1) { --delay: 0s; }
+        .option-card:nth-child(2) { --delay: 0.2s; }
+        
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .option-card:hover::before {
+            left: 100%;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .card-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        
+        .card-description {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-item {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            font-weight: 500;
+        }
+        
+        .feature-item:before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+            font-size: 1.1rem;
+        }
+        
+        .cta-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 20px;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+        
+        /* Bottom CTA Section */
+        .bottom-cta {
+            text-align: center;
+            padding: 80px 0 60px 0;
+            animation: slideUp 0.8s ease-out 1.8s both;
+        }
+        
+        .bottom-cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .bottom-cta p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .trust-indicators {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        .trust-icon {
+            font-size: 1.3rem;
+            color: #4ade80;
+        }
+        
+        /* Floating Elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1 class="logo">💰 My Money</h1>
+            <p class="tagline">Take Complete Control of Your Money</p>
+            <p class="description">Stop wondering where your money goes. Track every rupee, grow your savings, and build the financial future you deserve.</p>
+        </div>
+
+        <!-- Stats Banner -->
+        <div class="stats-banner">
+            <div class="stat-item">
+                <div class="stat-number">₹0</div>
+                <div class="stat-label">Starting Balance</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Free to Use</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Transactions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Access</div>
+            </div>
+        </div>
+
+        <!-- Main Selection -->
+        <div class="selection-section">
+            <h2 class="selection-title">What Would You Like To Do?</h2>
+            <p class="selection-subtitle">Choose your journey to financial freedom</p>
+            
+            <div class="option-cards">
+                <a href="/personal" class="option-card">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title">Personal Money Manager</h3>
+                    <p class="card-description">Perfect for individuals who want to track their daily expenses, save more money, and achieve their financial goals.</p>
+                    <div class="features-list">
+                        <div class="feature-item">Track where every rupee goes</div>
+                        <div class="feature-item">See your savings grow in real-time</div>
+                        <div class="feature-item">Set budgets that actually work</div>
+                        <div class="feature-item">Beautiful charts show your progress</div>
+                        <div class="feature-item">Never forget a transaction again</div>
+                    </div>
+                    <span class="cta-badge">📱 Start Tracking →</span>
+                </a>
+                
+                <a href="/business" class="option-card">
+                    <span class="card-icon">🏢</span>
+                    <h3 class="card-title">Business & Khatabook</h3>
+                    <p class="card-description">Complete solution for business owners to manage finances, track customer payments, and grow their business smartly.</p>
+                    <div class="features-list">
+                        <div class="feature-item">Digital khatabook for all customers</div>
+                        <div class="feature-item">Never lose track of who owes what</div>
+                        <div class="feature-item">Create professional invoices instantly</div>
+                        <div class="feature-item">Automatic tax calculations (GST ready)</div>
+                        <div class="feature-item">Business reports that make sense</div>
+                        <div class="feature-item">Grow your business with data</div>
+                    </div>
+					<div class="analytics-links">
+    <a href="/personal/analytics">📊 View Personal Analytics</a>
+    <a href="/business/analytics">📈 View Business Analytics</a>
+	<a href="/reports" class="nav-link">📋 Reports</a>
+</div>
+                    <span class="cta-badge">🚀 Grow Business →</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom CTA -->
+        <div class="bottom-cta">
+            <h2>🎉 Ready to Transform Your Financial Life?</h2>
+            <p>Join thousands of smart Indians who've already taken control of their money. Start your journey today - it's completely free!</p>
+            
+            <div class="trust-indicators">
+                <div class="trust-item">
+                    <span class="trust-icon">🔒</span>
+                    <span>100% Secure</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">🇮🇳</span>
+                    <span>Made for India</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">💝</span>
+                    <span>Always Free</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">📱</span>
+                    <span>Works Everywhere</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

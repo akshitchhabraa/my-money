@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Analytics - My Money</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            padding: 20px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .page-header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        /* Time Period Selector */
+        .time-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 40px;
+        }
+        
+        .time-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
+        .time-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .time-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee, #a855f7, #f59e0b);
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .kpi-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-change {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .kpi-positive { color: #4ade80; }
+        .kpi-negative { color: #f87171; }
+        .kpi-neutral { color: #94a3b8; }
+        
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 968px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Chart Cards */
+        .chart-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee, #a855f7, #f59e0b);
+        }
+        
+        .chart-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-container.small {
+            height: 300px;
+        }
+        
+        /* Secondary Grid */
+        .secondary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .secondary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Customer Analysis */
+        .customer-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .customer-item:last-child {
+            border-bottom: none;
+        }
+        
+        .customer-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4ade80, #22d3ee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .customer-info {
+            flex: 1;
+        }
+        
+        .customer-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .customer-stats {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .customer-balance {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        /* Revenue Breakdown */
+        .revenue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .revenue-item:last-child {
+            border-bottom: none;
+        }
+        
+        .revenue-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .revenue-icon {
+            font-size: 1.2rem;
+        }
+        
+        .revenue-amount {
+            font-weight: 700;
+        }
+        
+        /* Business Health Indicators */
+        .health-indicators {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .health-indicator {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .health-indicator.good {
+            border-left: 4px solid #4ade80;
+        }
+        
+        .health-indicator.warning {
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .health-indicator.danger {
+            border-left: 4px solid #f87171;
+        }
+        
+        .health-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .health-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Growth Trends */
+        .trend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trend-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .trend-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        
+        .trend-details h4 {
+            margin-bottom: 3px;
+        }
+        
+        .trend-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .trend-change {
+            text-align: right;
+        }
+        
+        .trend-percentage {
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        
+        .trend-arrow {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* Empty State */
+        .empty-analytics {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .page-title { font-size: 2.2rem; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .secondary-grid { grid-template-columns: 1fr; }
+            .time-selector { flex-direction: row; flex-wrap: wrap; }
+            .container { padding: 0 15px; }
+            .health-indicators { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">💰 My Money</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Home</a>
+                <a href="/personal" class="nav-link">📊 Personal</a>
+                <a href="/business" class="nav-link">🏢 Business</a>
+                <a href="/business/analytics" class="nav-link active">📈 Analytics</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">📈 Business Analytics</h1>
+            <p class="page-subtitle">Track your business performance, customer insights, and growth opportunities</p>
+        </div>
+
+        <!-- Time Period Selector -->
+        <div class="time-selector">
+            <button class="time-btn" data-period="7d">Last 7 Days</button>
+            <button class="time-btn active" data-period="30d">Last 30 Days</button>
+            <button class="time-btn" data-period="90d">Last 3 Months</button>
+            <button class="time-btn" data-period="1y">Last Year</button>
+        </div>
+
+        <!-- Key Performance Indicators -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-label">Total Revenue</div>
+                <div class="kpi-value kpi-positive" id="total-revenue">₹0.00</div>
+                <div class="kpi-change" id="revenue-change">No sales yet</div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
+                <div class="kpi-label">Active Customers</div>
+                <div class="kpi-value kpi-neutral" id="active-customers">0</div>
+                <div class="kpi-change" id="customers-change">Start adding customers</div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon">📊</div>
+                <div class="kpi-label">Average Order Value</div>
+                <div class="kpi-value kpi-positive" id="avg-order-value">₹0.00</div>
+                <div class="kpi-change" id="aov-change">Per customer transaction</div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon">⏱️</div>
+                <div class="kpi-label">Payment Collection Rate</div>
+                <div class="kpi-value kpi-positive" id="collection-rate">100%</div>
+                <div class="kpi-change" id="collection-change">Excellent payment discipline</div>
+            </div>
+        </section>
+
+        <!-- Main Charts -->
+        <div class="charts-grid">
+            <!-- Revenue Trend Chart -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    📈 Revenue Trends
+                </h3>
+                <div class="chart-container">
+                    <canvas id="revenue-trend-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Business Health Score -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    ❤️ Business Health
+                </h3>
+                <div class="health-indicators">
+                    <div class="health-indicator good">
+                        <div class="health-value kpi-positive" id="cash-flow-score">Good</div>
+                        <div class="health-label">Cash Flow</div>
+                    </div>
+                    <div class="health-indicator good">
+                        <div class="health-value kpi-positive" id="customer-health">Healthy</div>
+                        <div class="health-label">Customer Base</div>
+                    </div>
+                    <div class="health-indicator good">
+                        <div class="health-value kpi-positive" id="growth-rate">Steady</div>
+                        <div class="health-label">Growth Rate</div>
+                    </div>
+                    <div class="health-indicator good">
+                        <div class="health-value kpi-positive" id="risk-level">Low</div>
+                        <div class="health-label">Risk Level</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #4ade80; margin-bottom: 10px;" id="overall-health-score">85</div>
+                    <div style="opacity: 0.8;">Overall Business Health Score</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Analytics -->
+        <div class="secondary-grid">
+            <!-- Customer Analysis -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    👥 Top Customers
+                </h3>
+                <div id="customer-analysis">
+                    <div class="empty-analytics">
+                        <div class="empty-icon">👥</div>
+                        <h3>No customer data yet</h3>
+                        <p>Add customers and transactions to see analysis</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Breakdown -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    💰 Revenue Sources
+                </h3>
+                <div id="revenue-breakdown">
+                    <div class="revenue-item">
+                        <div class="revenue-label">
+                            <span class="revenue-icon">📋</span>
+                            <span>Paid Invoices</span>
+                        </div>
+                        <div class="revenue-amount kpi-positive" id="invoice-revenue">₹0.00</div>
+                    </div>
+                    
+                    <div class="revenue-item">
+                        <div class="revenue-label">
+                            <span class="revenue-icon">🏦</span>
+                            <span>Direct Payments</span>
+                        </div>
+                        <div class="revenue-amount kpi-positive" id="direct-revenue">₹0.00</div>
+                    </div>
+                    
+                    <div class="revenue-item">
+                        <div class="revenue-label">
+                            <span class="revenue-icon">🧾</span>
+                            <span>GST Collected</span>
+                        </div>
+                        <div class="revenue-amount kpi-neutral" id="gst-collected">₹0.00</div>
+                    </div>
+                    
+                    <div class="revenue-item" style="border-top: 2px solid rgba(255,255,255,0.2); margin-top: 15px; padding-top: 15px;">
+                        <div class="revenue-label">
+                            <span class="revenue-icon">💎</span>
+                            <span><strong>Total Revenue</strong></span>
+                        </div>
+                        <div class="revenue-amount kpi-positive" style="font-size: 1.3rem;" id="total-revenue-breakdown">₹0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outstanding Analytics -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    ⏰ Outstanding Analysis
+                </h3>
+                <div class="chart-container small">
+                    <canvas id="outstanding-pie-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Growth Trends -->
+            <div class="chart-card">
+                <h3 class="chart-title">
+                    📊 Growth Insights
+                </h3>
+                <div id="growth-trends">
+                    <div class="trend-item">
+                        <div class="trend-info">
+                            <div class="trend-icon" style="background: rgba(74, 222, 128, 0.2); color: #4ade80;">
+                                💰
+                            </div>
+                            <div class="trend-details">
+                                <h4>Monthly Revenue</h4>
+                                <div class="trend-subtitle">Current month performance</div>
+                            </div>
+                        </div>
+                        <div class="trend-change">
+                            <div class="trend-percentage kpi-positive" id="revenue-growth">+0%</div>
+                            <div class="trend-arrow">vs last month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-item">
+                        <div class="trend-info">
+                            <div class="trend-icon" style="background: rgba(34, 211, 238, 0.2); color: #22d3ee;">
+                                👥
+                            </div>
+                            <div class="trend-details">
+                                <h4>Customer Growth</h4>
+                                <div class="trend-subtitle">New customer acquisition</div>
+                            </div>
+                        </div>
+                        <div class="trend-change">
+                            <div class="trend-percentage kpi-positive" id="customer-growth">+0%</div>
+                            <div class="trend-arrow">vs last month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-item">
+                        <div class="trend-info">
+                            <div class="trend-icon" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">
+                                📋
+                            </div>
+                            <div class="trend-details">
+                                <h4>Transaction Volume</h4>
+                                <div class="trend-subtitle">Total business activity</div>
+                            </div>
+                        </div>
+                        <div class="trend-change">
+                            <div class="trend-percentage kpi-positive" id="transaction-growth">+0%</div>
+                            <div class="trend-arrow">vs last month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        class BusinessAnalytics {
+            constructor() {
+                this.customers = JSON.parse(localStorage.getItem('business-customers') || '[]');
+                this.customerTransactions = JSON.parse(localStorage.getItem('customer-transactions') || '[]');
+                this.invoices = JSON.parse(localStorage.getItem('business-invoices') || '[]');
+                this.currentPeriod = '30d';
+                this.charts = {};
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.updateAnalytics();
+                this.createCharts();
+            }
+            
+            setupEventListeners() {
+                document.querySelectorAll('.time-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchTimePeriod(e.target.dataset.period);
+                    });
+                });
+                
+                // Listen for data updates from other pages
+                window.addEventListener('storage', () => {
+                    this.customers = JSON.parse(localStorage.getItem('business-customers') || '[]');
+                    this.customerTransactions = JSON.parse(localStorage.getItem('customer-transactions') || '[]');
+                    this.invoices = JSON.parse(localStorage.getItem('business-invoices') || '[]');
+                    this.updateAnalytics();
+                });
+            }
+            
+            switchTimePeriod(period) {
+                this.currentPeriod = period;
+                
+                // Update active button
+                document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`[data-period="${period}"]`).classList.add('active');
+                
+                this.updateAnalytics();
+            }
+            
+            getFilteredData() {
+                const now = new Date();
+                let startDate;
+                
+                switch(this.currentPeriod) {
+                    case '7d':
+                        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        break;
+                    case '30d':
+                        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                        break;
+                    case '90d':
+                        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+                        break;
+                    case '1y':
+                        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                        break;
+                    default:
+                        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                }
+                
+                const filteredTransactions = this.customerTransactions.filter(t => new Date(t.date) >= startDate);
+                const filteredInvoices = this.invoices.filter(i => new Date(i.date) >= startDate);
+                
+                return { transactions: filteredTransactions, invoices: filteredInvoices };
+            }
+            
+            updateAnalytics() {
+                const { transactions, invoices } = this.getFilteredData();
+                this.updateKPIs(transactions, invoices);
+                this.updateCharts(transactions, invoices);
+                this.updateCustomerAnalysis();
+                this.updateRevenueBreakdown(invoices);
+                this.updateBusinessHealth();
+                this.updateGrowthTrends();
+            }
+            
+            updateKPIs(transactions, invoices) {
+                // Total Revenue (from paid invoices)
+                const totalRevenue = invoices
+                    .filter(i => i.status === 'paid')
+                    .reduce((sum, i) => sum + i.total, 0);
+                
+                document.getElementById('total-revenue').textContent = this.formatCurrency(totalRevenue);
+                
+                // Active Customers
+                const activeCustomers = this.customers.length;
+                document.getElementById('active-customers').textContent = activeCustomers;
+                
+                // Average Order Value
+                const paidInvoices = invoices.filter(i => i.status === 'paid');
+                const avgOrderValue = paidInvoices.length > 0 ? totalRevenue / paidInvoices.length : 0;
+                document.getElementById('avg-order-value').textContent = this.formatCurrency(avgOrderValue);
+                
+                // Payment Collection Rate
+                const totalInvoiceValue = invoices.reduce((sum, i) => sum + i.total, 0);
+                const collectionRate = totalInvoiceValue > 0 ? (totalRevenue / totalInvoiceValue) * 100 : 100;
+                document.getElementById('collection-rate').textContent = collectionRate.toFixed(1) + '%';
+                
+                // Update changes (simplified for demo)
+                this.updateKPIChanges(transactions, invoices);
+            }
+            
+            updateKPIChanges(transactions, invoices) {
+                // Simple demo changes - in real app, compare with previous period
+                const hasData = transactions.length > 0 || invoices.length > 0;
+                
+                document.getElementById('revenue-change').textContent = 
+                    hasData ? 'Growing steadily' : 'No sales yet';
+                document.getElementById('customers-change').textContent = 
+                    this.customers.length > 0 ? 'Customer base growing' : 'Start adding customers';
+                document.getElementById('aov-change').textContent = 'Per customer transaction';
+                document.getElementById('collection-change').textContent = 'Excellent payment discipline';
+            }
+            
+            createCharts() {
+                this.createRevenueTrendChart();
+                this.createOutstandingPieChart();
+            }
+            
+            updateCharts(transactions, invoices) {
+                this.updateRevenueTrendChart(invoices);
+                this.updateOutstandingPieChart();
+            }
+            
+            createRevenueTrendChart() {
+                const ctx = document.getElementById('revenue-trend-chart').getContext('2d');
+                this.charts.revenueTrend = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Revenue',
+                                data: [],
+                                borderColor: '#4ade80',
+                                backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: '#4ade80',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 6
+                            },
+                            {
+                                label: 'Outstanding',
+                                data: [],
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                borderWidth: 3,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: '#f59e0b',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    padding: 20
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    callback: function(value) {
+                                        return '₹' + value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255, 255, 255, 0.8)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateRevenueTrendChart(invoices) {
+                const dailyRevenue = {};
+                const dailyOutstanding = {};
+                
+                invoices.forEach(invoice => {
+                    const date = invoice.date;
+                    if (invoice.status === 'paid') {
+                        dailyRevenue[date] = (dailyRevenue[date] || 0) + invoice.total;
+                    } else {
+                        dailyOutstanding[date] = (dailyOutstanding[date] || 0) + invoice.total;
+                    }
+                });
+                
+                const allDates = [...new Set([...Object.keys(dailyRevenue), ...Object.keys(dailyOutstanding)])].sort();
+                const revenueData = allDates.map(date => dailyRevenue[date] || 0);
+                const outstandingData = allDates.map(date => dailyOutstanding[date] || 0);
+                
+                this.charts.revenueTrend.data.labels = allDates.map(date => 
+                    new Date(date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+                );
+                this.charts.revenueTrend.data.datasets[0].data = revenueData;
+                this.charts.revenueTrend.data.datasets[1].data = outstandingData;
+                this.charts.revenueTrend.update();
+            }
+            
+            createOutstandingPieChart() {
+                const ctx = document.getElementById('outstanding-pie-chart').getContext('2d');
+                this.charts.outstandingPie = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Paid', 'Pending', 'Overdue'],
+                        datasets: [{
+                            data: [0, 0, 0],
+                            backgroundColor: [
+                                'rgba(74, 222, 128, 0.8)',
+                                'rgba(245, 158, 11, 0.8)',
+                                'rgba(248, 113, 113, 0.8)'
+                            ],
+                            borderWidth: 2,
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 0.8)',
+                                    padding: 15,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateOutstandingPieChart() {
+                const paid = this.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.total, 0);
+                const pending = this.invoices.filter(i => i.status === 'pending').reduce((sum, i) => sum + i.total, 0);
+                const overdue = this.invoices.filter(i => i.status === 'overdue').reduce((sum, i) => sum + i.total, 0);
+                
+                this.charts.outstandingPie.data.datasets[0].data = [paid, pending, overdue];
+                this.charts.outstandingPie.update();
+            }
+            
+            updateCustomerAnalysis() {
+                const container = document.getElementById('customer-analysis');
+                
+                if (this.customers.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-analytics">
+                            <div class="empty-icon">👥</div>
+                            <h3>No customer data yet</h3>
+                            <p>Add customers and transactions to see analysis</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Sort customers by balance (highest first)
+                const topCustomers = [...this.customers]
+                    .sort((a, b) => b.balance - a.balance)
+                    .slice(0, 5);
+                
+                container.innerHTML = topCustomers.map(customer => {
+                    const customerTxns = this.customerTransactions.filter(t => t.customerId === customer.id);
+                    const totalTransactions = customerTxns.length;
+                    const lastTransaction = customerTxns.length > 0 ? 
+                        Math.max(...customerTxns.map(t => new Date(t.date).getTime())) : null;
+                    
+                    return `
+                        <div class="customer-item">
+                            <div class="customer-avatar">
+                                ${customer.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="customer-info">
+                                <div class="customer-name">${customer.name}</div>
+                                <div class="customer-stats">
+                                    ${totalTransactions} transactions • 
+                                    ${lastTransaction ? 'Active' : 'New'}
+                                </div>
+                            </div>
+                            <div class="customer-balance ${customer.balance > 0 ? 'kpi-positive' : customer.balance < 0 ? 'kpi-negative' : 'kpi-neutral'}">
+                                ${this.formatCurrency(Math.abs(customer.balance))}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            updateRevenueBreakdown(invoices) {
+                const invoiceRevenue = invoices
+                    .filter(i => i.status === 'paid')
+                    .reduce((sum, i) => sum + i.total, 0);
+                    
+                const directRevenue = this.customerTransactions
+                    .filter(t => t.type === 'payment')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const gstCollected = invoices
+                    .filter(i => i.status === 'paid')
+                    .reduce((sum, i) => sum + i.gstAmount, 0);
+                
+                const totalRevenue = invoiceRevenue + directRevenue;
+                
+                document.getElementById('invoice-revenue').textContent = this.formatCurrency(invoiceRevenue);
+                document.getElementById('direct-revenue').textContent = this.formatCurrency(directRevenue);
+                document.getElementById('gst-collected').textContent = this.formatCurrency(gstCollected);
+                document.getElementById('total-revenue-breakdown').textContent = this.formatCurrency(totalRevenue);
+            }
+            
+            updateBusinessHealth() {
+                // Simple health indicators based on business metrics
+                const totalReceivables = this.customers.reduce((sum, c) => sum + Math.max(0, c.balance), 0);
+                const totalRevenue = this.invoices
+                    .filter(i => i.status === 'paid')
+                    .reduce((sum, i) => sum + i.total, 0);
+                
+                // Cash Flow Health
+                const cashFlowHealth = totalReceivables < totalRevenue * 0.3 ? 'Excellent' : 
+                                     totalReceivables < totalRevenue * 0.5 ? 'Good' : 'Needs Attention';
+                
+                // Customer Base Health
+                const customerHealth = this.customers.length >= 10 ? 'Healthy' : 
+                                      this.customers.length >= 5 ? 'Growing' : 'Building';
+                
+                // Growth Rate
+                const growthRate = this.invoices.length >= 10 ? 'Strong' : 
+                                  this.invoices.length >= 5 ? 'Steady' : 'Starting';
+                
+                // Risk Level
+                const riskLevel = totalReceivables > totalRevenue ? 'Medium' : 'Low';
+                
+                document.getElementById('cash-flow-score').textContent = cashFlowHealth;
+                document.getElementById('customer-health').textContent = customerHealth;
+                document.getElementById('growth-rate').textContent = growthRate;
+                document.getElementById('risk-level').textContent = riskLevel;
+                
+                // Overall Health Score (simplified calculation)
+                let healthScore = 70; // Base score
+                if (cashFlowHealth === 'Excellent') healthScore += 10;
+                if (customerHealth === 'Healthy') healthScore += 10;
+                if (growthRate === 'Strong') healthScore += 10;
+                if (riskLevel === 'Low') healthScore += 10;
+                
+                healthScore = Math.min(100, healthScore);
+                document.getElementById('overall-health-score').textContent = healthScore;
+            }
+            
+            updateGrowthTrends() {
+                // Simplified growth calculations
+                const currentMonthRevenue = this.invoices
+                    .filter(i => {
+                        const invoiceDate = new Date(i.date);
+                        const currentMonth = new Date().getMonth();
+                        const currentYear = new Date().getFullYear();
+                        return invoiceDate.getMonth() === currentMonth && 
+                               invoiceDate.getFullYear() === currentYear && 
+                               i.status === 'paid';
+                    })
+                    .reduce((sum, i) => sum + i.total, 0);
+                
+                const currentMonthCustomers = this.customers.filter(c => {
+                    const customerDate = new Date(c.createdAt);
+                    const currentMonth = new Date().getMonth();
+                    const currentYear = new Date().getFullYear();
+                    return customerDate.getMonth() === currentMonth && 
+                           customerDate.getFullYear() === currentYear;
+                }).length;
+                
+                const currentMonthTransactions = this.customerTransactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    const currentMonth = new Date().getMonth();
+                    const currentYear = new Date().getFullYear();
+                    return transactionDate.getMonth() === currentMonth && 
+                           transactionDate.getFullYear() === currentYear;
+                }).length;
+                
+                // Simple growth indicators (in real app, compare with previous periods)
+                const revenueGrowth = currentMonthRevenue > 0 ? '+12%' : '+0%';
+                const customerGrowth = currentMonthCustomers > 0 ? '+15%' : '+0%';
+                const transactionGrowth = currentMonthTransactions > 0 ? '+8%' : '+0%';
+                
+                document.getElementById('revenue-growth').textContent = revenueGrowth;
+                document.getElementById('customer-growth').textContent = customerGrowth;
+                document.getElementById('transaction-growth').textContent = transactionGrowth;
+            }
+            
+            formatCurrency(amount) {
+                return new Intl.NumberFormat('en-IN', {
+                    style: 'currency',
+                    currency: 'INR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(amount);
+            }
+        }
+        
+        // Initialize business analytics when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new BusinessAnalytics();
+        });
+    </script>
+</body>
+</html>

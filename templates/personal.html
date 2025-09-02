@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance - AI-Powered Money Management</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* AI-specific styles that integrate with your design system */
+        .ai-indicator {
+            margin-top: var(--space-8);
+            font-size: var(--font-size-sm);
+        }
+
+        .ai-suggestion {
+            padding: var(--space-12) var(--space-16);
+            border-radius: var(--radius-base);
+            border-left: 4px solid var(--color-primary);
+            background: var(--color-bg-1);
+            color: var(--color-text);
+            animation: slideDown 0.3s var(--ease-standard);
+            border: 1px solid var(--color-card-border);
+        }
+
+        .ai-suggestion.high {
+            border-left-color: var(--color-success);
+            background: var(--color-bg-3);
+            color: var(--color-success);
+        }
+
+        .ai-suggestion.medium {
+            border-left-color: var(--color-warning);
+            background: var(--color-bg-2);
+            color: var(--color-warning);
+        }
+
+        .ai-suggestion.low {
+            border-left-color: var(--color-error);
+            background: var(--color-bg-4);
+            color: var(--color-error);
+        }
+
+        .ai-loading {
+            padding: var(--space-10) var(--space-16);
+            border-radius: var(--radius-base);
+            background: var(--color-bg-2);
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            border: 1px solid var(--color-card-border);
+        }
+
+        .confidence {
+            font-weight: var(--font-weight-normal);
+            opacity: 0.8;
+            font-size: var(--font-size-xs);
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: loading-dots 1.5s infinite;
+        }
+
+        @keyframes loading-dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            90%, 100% { content: '...'; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-status-display {
+            background: var(--color-bg-5);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-12) var(--space-16);
+            margin-bottom: var(--space-16);
+            text-align: center;
+            color: var(--color-text-secondary);
+        }
+
+        .ai-status-display.ready {
+            color: var(--color-success);
+        }
+
+        .ai-status-display.thinking {
+            color: var(--color-primary);
+        }
+
+        .ai-status-display.error {
+            color: var(--color-error);
+        }
+
+        .notification {
+            position: fixed;
+            top: var(--space-20);
+            right: var(--space-20);
+            max-width: 400px;
+            padding: var(--space-16) var(--space-20);
+            border-radius: var(--radius-base);
+            color: var(--color-white);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            animation: slideInRight 0.3s var(--ease-standard);
+            border: 1px solid transparent;
+        }
+
+        .notification.success { 
+            background: var(--color-success);
+            border-color: var(--color-success);
+        }
+        
+        .notification.error { 
+            background: var(--color-error);
+            border-color: var(--color-error);
+        }
+        
+        .notification.info { 
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .notification-close {
+            float: right;
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
+            padding: 0;
+            margin-left: var(--space-10);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .field-error {
+            color: var(--color-error);
+            font-size: var(--font-size-xs);
+            margin-top: var(--space-4);
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--color-error);
+            box-shadow: 0 0 0 2px rgba(var(--color-error-rgb), 0.1);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--color-surface);
+            border-top: 2px solid var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-8);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Enhancement to existing form styles */
+        .form-group {
+            position: relative;
+        }
+
+        /* AI suggestion positioning */
+        .form-group .ai-indicator {
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header using your existing styles -->
+        <div class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🤖 AI-Powered Personal Finance</h1>
+                <p class="text-muted">Smart financial management with AI-powered transaction categorization</p>
+            </div>
+        </div>
+
+        <!-- AI Status Display -->
+        <div class="ai-status-display ready" id="ai-status-display">
+            <strong>AI Status:</strong> <span id="ai-status">Ready to help categorize your transactions!</span>
+        </div>
+
+        <!-- Balance Cards Section -->
+        <div class="balance-section">
+            <div class="balance-cards">
+                <div class="balance-card">
+                    <div class="card__body">
+                        <div class="balance-label">Current Balance</div>
+                        <div class="balance-amount" id="current-balance">₹0.00</div>
+                    </div>
+                </div>
+                <div class="balance-card">
+                    <div class="card__body">
+                        <div class="balance-label">Total Income</div>
+                        <div class="balance-amount income" id="total-income">₹0.00</div>
+                    </div>
+                </div>
+                <div class="balance-card">
+                    <div class="card__body">
+                        <div class="balance-label">Total Expenses</div>
+                        <div class="balance-amount expense" id="total-expenses">₹0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Form Section -->
+        <div class="transaction-form-section">
+            <div class="card">
+                <div class="card__header">
+                    <h3 id="form-title">Add New Transaction</h3>
+                </div>
+                <div class="card__body">
+                    <form id="transaction-form">
+                        <div class="form-row">
+                            <!-- Date Field -->
+                            <div class="form-group">
+                                <label class="form-label" for="transaction-date">📅 Date</label>
+                                <input type="date" class="form-control" id="transaction-date" name="date" required>
+                            </div>
+
+                            <!-- Amount Field -->
+                            <div class="form-group">
+                                <label class="form-label" for="transaction-amount">💰 Amount</label>
+                                <input type="number" class="form-control" id="transaction-amount" name="amount" 
+                                       placeholder="0.00" step="0.01" min="0" required>
+                            </div>
+                        </div>
+
+                        <!-- Description Field (AI Integration) -->
+                        <div class="form-group">
+                            <label class="form-label" for="transaction-description">💬 Description</label>
+                            <input type="text" class="form-control" id="transaction-description" name="description" 
+                                   placeholder="e.g., lunch at starbucks, uber ride to office, grocery shopping" required>
+                            <small class="text-muted">💡 AI will automatically suggest a category as you type</small>
+                            <!-- AI indicators will appear here -->
+                        </div>
+
+                        <!-- Category Field (AI Auto-Selection) -->
+                        <div class="form-group">
+                            <label class="form-label" for="transaction-category">🏷️ Category <span class="text-muted">(AI Suggested)</span></label>
+                            <select class="form-control" id="transaction-category" name="category" required>
+                                <option value="">🤖 AI will suggest category...</option>
+                                <option value="Food & Dining">🍽️ Food & Dining</option>
+                                <option value="Transportation">🚗 Transportation</option>
+                                <option value="Shopping">🛒 Shopping</option>
+                                <option value="Bills & Utilities">📋 Bills & Utilities</option>
+                                <option value="Health & Medical">🏥 Health & Medical</option>
+                                <option value="Entertainment">🎬 Entertainment</option>
+                                <option value="Education">📚 Education</option>
+                                <option value="Investment">💰 Investment</option>
+                                <option value="Salary & Income">💼 Salary & Income</option>
+                                <option value="Business">🏢 Business</option>
+                                <option value="Travel">✈️ Travel</option>
+                                <option value="Personal Care">💅 Personal Care</option>
+                                <option value="Other">❓ Other</option>
+                            </select>
+                            <!-- AI indicators will appear here -->
+                        </div>
+
+                        <!-- Transaction Type -->
+                        <div class="form-group">
+                            <label class="form-label" for="transaction-type">🔄 Type</label>
+                            <select class="form-control" id="transaction-type" name="type" required>
+                                <option value="">Select transaction type</option>
+                                <option value="income">💰 Income</option>
+                                <option value="expense">💸 Expense</option>
+                            </select>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn" class="btn btn--primary btn--full-width">
+                                <span class="btn-text">💾 Add Transaction</span>
+                                <span class="btn-loading" style="display: none;">
+                                    <span class="loading-spinner"></span>Processing...
+                                </span>
+                            </button>
+                            <button type="button" id="cancel-edit" class="btn btn--secondary btn--full-width hidden">
+                                ✖️ Cancel Edit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History Section -->
+        <div class="history-section">
+            <div class="card">
+                <div class="card__header">
+                    <div class="history-header">
+                        <h3>Recent Transactions</h3>
+                        <span class="transaction-count" id="transaction-count">0 transactions</span>
+                    </div>
+                </div>
+                <div class="card__body">
+                    <div class="transactions-list" id="transactions-list">
+                        <div class="empty-state">
+                            <p>📝 Add your first transaction to start tracking your finances with AI-powered categorization! 🤖</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI-Enhanced Transaction Management Script -->
+    <script>
+        class AITransactionManager {
+            constructor() {
+                console.log('🤖 Initializing AI Transaction Manager...');
+                
+                this.aiTimeout = null;
+                this.lastDescription = '';
+                this.currentSuggestion = null;
+                this.editingTransactionId = null;
+                this.transactions = this.loadFromStorage('transactions', []);
+                
+                this.apiEndpoints = {
+                    aiCategorize: '/api/ai/categorize-transaction',
+                    transactions: '/api/transactions',
+                    aiLearn: '/api/ai/learn-correction'
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setCurrentDate();
+                this.updateBalanceCards();
+                this.updateTransactionsList();
+                console.log('✅ AI Transaction Manager initialized successfully');
+                this.updateAIStatus('🟢 AI Ready - Type a description to see magic!', 'ready');
+            }
+
+            setupEventListeners() {
+                // Description field AI integration
+                const descriptionField = document.getElementById('transaction-description');
+                const categoryField = document.getElementById('transaction-category');
+                const form = document.getElementById('transaction-form');
+                const cancelBtn = document.getElementById('cancel-edit');
+
+                if (descriptionField) {
+                    descriptionField.addEventListener('input', (e) => {
+                        this.handleDescriptionInput(e.target.value);
+                    });
+
+                    descriptionField.addEventListener('blur', () => {
+                        this.lastDescription = descriptionField.value;
+                    });
+                }
+
+                if (categoryField) {
+                    categoryField.addEventListener('change', (e) => {
+                        this.handleCategoryChange(e.target.value);
+                    });
+                }
+
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        this.handleFormSubmit(e);
+                    });
+                }
+
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', () => {
+                        this.cancelEdit();
+                    });
+                }
+
+                // Real-time amount validation
+                const amountField = document.getElementById('transaction-amount');
+                if (amountField) {
+                    amountField.addEventListener('input', () => {
+                        this.validateAmountField(amountField);
+                    });
+                }
+            }
+
+            setCurrentDate() {
+                const dateField = document.getElementById('transaction-date');
+                if (dateField) {
+                    dateField.value = new Date().toISOString().split('T')[0];
+                }
+            }
+
+            async handleDescriptionInput(description) {
+                // Clear previous timeout
+                if (this.aiTimeout) {
+                    clearTimeout(this.aiTimeout);
+                }
+
+                // Clear AI indicators for short descriptions
+                if (description.trim().length < 3) {
+                    this.clearAIIndicators();
+                    this.updateAIStatus('🟡 Type at least 3 characters for AI suggestions...', 'ready');
+                    return;
+                }
+
+                // Show loading
+                this.showAILoading();
+                this.updateAIStatus('🤖 AI is analyzing your description...', 'thinking');
+
+                // Debounce AI calls (wait 500ms after user stops typing)
+                this.aiTimeout = setTimeout(async () => {
+                    await this.getAICategory(description);
+                }, 500);
+            }
+
+            async getAICategory(description) {
+                try {
+                    console.log('🤖 Getting AI category suggestion for:', description);
+                    
+                    const response = await fetch(this.apiEndpoints.aiCategorize, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            description: description,
+                            user_id: 'demo_user'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`AI API error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.success && data.suggestion) {
+                        this.displayAISuggestion(data.suggestion);
+                        this.autoSelectCategory(data.suggestion);
+                        console.log('✅ AI suggestion received:', data.suggestion);
+                    } else {
+                        throw new Error('No AI suggestion received');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ AI categorization error:', error);
+                    this.clearAIIndicators();
+                    this.updateAIStatus('❌ AI temporarily unavailable - please select category manually', 'error');
+                    this.showNotification('AI categorization temporarily unavailable', 'error');
+                } finally {
+                    this.hideAILoading();
+                }
+            }
+
+            autoSelectCategory(suggestion) {
+                const categoryField = document.getElementById('transaction-category');
+                if (!categoryField) return;
+
+                // Auto-select the suggested category if confidence is reasonable
+                if (suggestion.suggested_category && suggestion.confidence > 0.2) {
+                    categoryField.value = suggestion.suggested_category;
+                    
+                    // Trigger change event
+                    categoryField.dispatchEvent(new Event('change'));
+                    
+                    const confidence = Math.round(suggestion.confidence * 100);
+                    this.updateAIStatus(`✅ AI selected "${suggestion.suggested_category}" (${confidence}% confident)`, 'ready');
+                }
+            }
+
+            displayAISuggestion(suggestion) {
+                this.currentSuggestion = suggestion;
+                this.showAIConfidence(suggestion);
+            }
+
+            showAIConfidence(suggestion) {
+                const categoryField = document.getElementById('transaction-category');
+                if (!categoryField) return;
+
+                // Remove existing indicator
+                const existingIndicator = document.getElementById('ai-confidence-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+
+                // Create new indicator
+                const indicator = document.createElement('div');
+                indicator.id = 'ai-confidence-indicator';
+                indicator.className = 'ai-indicator';
+                
+                const confidence = Math.round(suggestion.confidence * 100);
+                const confidenceClass = confidence > 70 ? 'high' : confidence > 40 ? 'medium' : 'low';
+                
+                indicator.innerHTML = `
+                    <div class="ai-suggestion ${confidenceClass}">
+                        🤖 <strong>AI Suggestion:</strong> ${suggestion.suggested_category} 
+                        <span class="confidence">(${confidence}% confident)</span>
+                        ${suggestion.alternatives ? ` | Alternatives: ${suggestion.alternatives.slice(0, 2).join(', ')}` : ''}
+                    </div>
+                `;
+
+                categoryField.parentNode.appendChild(indicator);
+            }
+
+            showAILoading() {
+                const categoryField = document.getElementById('transaction-category');
+                if (!categoryField) return;
+
+                // Remove existing indicators
+                this.clearAIIndicators();
+
+                // Create loading indicator
+                const indicator = document.createElement('div');
+                indicator.id = 'ai-loading-indicator';
+                indicator.className = 'ai-indicator';
+                indicator.innerHTML = `
+                    <div class="ai-loading">
+                        🤖 <span class="loading-dots">AI is thinking</span>
+                    </div>
+                `;
+
+                categoryField.parentNode.appendChild(indicator);
+            }
+
+            hideAILoading() {
+                const loadingIndicator = document.getElementById('ai-loading-indicator');
+                if (loadingIndicator) {
+                    loadingIndicator.remove();
+                }
+            }
+
+            clearAIIndicators() {
+                ['ai-loading-indicator', 'ai-confidence-indicator'].forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.remove();
+                });
+            }
+
+            async handleCategoryChange(selectedCategory) {
+                // If user manually changed category different from AI suggestion, teach AI
+                if (this.currentSuggestion && 
+                    selectedCategory !== this.currentSuggestion.suggested_category && 
+                    this.lastDescription.trim().length > 0 && 
+                    selectedCategory !== '') {
+                    
+                    await this.teachAI(this.lastDescription, selectedCategory);
+                }
+            }
+
+            async teachAI(description, correctCategory) {
+                try {
+                    console.log('📚 Teaching AI: description =', description, ', correct category =', correctCategory);
+                    
+                    const response = await fetch(this.apiEndpoints.aiLearn, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            description: description,
+                            correct_category: correctCategory,
+                            user_id: 'demo_user'
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            console.log('✅ AI learned from correction');
+                            this.showNotification('🤖 AI learned from your correction and will improve!', 'success');
+                            this.updateAIStatus('🧠 AI learned from your correction - getting smarter!', 'ready');
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error teaching AI:', error);
+                }
+            }
+
+            async handleFormSubmit(e) {
+                e.preventDefault();
+                
+                const submitBtn = document.getElementById('submit-btn');
+                const formData = this.getFormData();
+                
+                if (!this.validateForm(formData)) {
+                    return;
+                }
+
+                try {
+                    // Show loading
+                    this.showLoading(submitBtn);
+
+                    const response = await fetch(this.apiEndpoints.transactions, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            // Update local storage
+                            this.transactions.push(data.transaction);
+                            this.saveToStorage('transactions', this.transactions);
+                            
+                            this.showNotification('Transaction added successfully! 🎉', 'success');
+                            this.resetForm();
+                            this.updateBalanceCards();
+                            this.updateTransactionsList();
+                            this.updateAIStatus('✅ Transaction saved! Add another to see AI in action.', 'ready');
+                        } else {
+                            throw new Error(data.message || 'Failed to save transaction');
+                        }
+                    } else {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+
+                } catch (error) {
+                    console.error('❌ Error saving transaction:', error);
+                    this.showNotification('Failed to save transaction. Please try again.', 'error');
+                } finally {
+                    this.hideLoading(submitBtn);
+                }
+            }
+
+            getFormData() {
+                return {
+                    date: document.getElementById('transaction-date')?.value || '',
+                    amount: parseFloat(document.getElementById('transaction-amount')?.value || '0'),
+                    description: document.getElementById('transaction-description')?.value?.trim() || '',
+                    category: document.getElementById('transaction-category')?.value || '',
+                    type: document.getElementById('transaction-type')?.value || ''
+                };
+            }
+
+            validateForm(data) {
+                this.clearFormErrors();
+                
+                const validations = [
+                    { field: 'transaction-date', condition: !data.date, message: 'Date is required' },
+                    { field: 'transaction-amount', condition: !data.amount || data.amount <= 0, message: 'Amount must be greater than ₹0.00' },
+                    { field: 'transaction-description', condition: !data.description, message: 'Description is required' },
+                    { field: 'transaction-category', condition: !data.category, message: 'Category is required' },
+                    { field: 'transaction-type', condition: !data.type, message: 'Transaction type is required' }
+                ];
+
+                let isValid = true;
+                validations.forEach(validation => {
+                    if (validation.condition) {
+                        this.showFieldError(validation.field, validation.message);
+                        isValid = false;
+                    }
+                });
+
+                return isValid;
+            }
+
+            showFieldError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    // Remove existing error
+                    const existingError = field.parentNode.querySelector('.field-error');
+                    if (existingError) existingError.remove();
+
+                    // Add new error
+                    const error = document.createElement('div');
+                    error.className = 'field-error';
+                    error.textContent = message;
+                    field.parentNode.appendChild(error);
+                    
+                    field.classList.add('is-invalid');
+                }
+            }
+
+            clearFormErrors() {
+                document.querySelectorAll('.field-error').forEach(error => error.remove());
+                document.querySelectorAll('.is-invalid').forEach(field => field.classList.remove('is-invalid'));
+            }
+
+            resetForm() {
+                const form = document.getElementById('transaction-form');
+                if (form) {
+                    form.reset();
+                    this.setCurrentDate();
+                    this.clearAIIndicators();
+                    this.clearFormErrors();
+                    this.editingTransactionId = null;
+                    
+                    // Reset form title and buttons
+                    const title = document.getElementById('form-title');
+                    const submitBtn = document.getElementById('submit-btn');
+                    const cancelBtn = document.getElementById('cancel-edit');
+                    
+                    if (title) title.textContent = 'Add New Transaction';
+                    if (submitBtn) submitBtn.querySelector('.btn-text').textContent = '💾 Add Transaction';
+                    if (cancelBtn) cancelBtn.classList.add('hidden');
+                }
+            }
+
+            cancelEdit() {
+                this.resetForm();
+                this.updateAIStatus('🟢 AI Ready - Type a description to see magic!', 'ready');
+            }
+
+            editTransaction(id) {
+                const transaction = this.transactions.find(t => t.id === id);
+                if (!transaction) return;
+
+                // Fill form fields
+                document.getElementById('transaction-date').value = transaction.date;
+                document.getElementById('transaction-amount').value = transaction.amount;
+                document.getElementById('transaction-description').value = transaction.description;
+                document.getElementById('transaction-category').value = transaction.category;
+                document.getElementById('transaction-type').value = transaction.type;
+
+                // Update form UI
+                const title = document.getElementById('form-title');
+                const submitBtn = document.getElementById('submit-btn');
+                const cancelBtn = document.getElementById('cancel-edit');
+                
+                if (title) title.textContent = 'Edit Transaction';
+                if (submitBtn) submitBtn.querySelector('.btn-text').textContent = '💾 Update Transaction';
+                if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+                this.editingTransactionId = id;
+                this.updateAIStatus('✏️ Editing transaction - AI suggestions available', 'ready');
+
+                // Scroll to form
+                document.querySelector('.transaction-form-section').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            deleteTransaction(id) {
+                this.transactions = this.transactions.filter(t => t.id !== id);
+                this.saveToStorage('transactions', this.transactions);
+                this.updateBalanceCards();
+                this.updateTransactionsList();
+                this.showNotification('Transaction deleted successfully!', 'success');
+            }
+
+            updateBalanceCards() {
+                const totalIncome = this.transactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                    
+                const totalExpenses = this.transactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                    
+                const currentBalance = totalIncome - totalExpenses;
+                
+                this.updateElementText('current-balance', this.formatCurrency(currentBalance));
+                this.updateElementText('total-income', this.formatCurrency(totalIncome));
+                this.updateElementText('total-expenses', this.formatCurrency(totalExpenses));
+                
+                // Update balance color
+                const balanceEl = document.getElementById('current-balance');
+                if (balanceEl) {
+                    balanceEl.classList.remove('positive', 'negative');
+                    balanceEl.classList.add(currentBalance >= 0 ? 'positive' : 'negative');
+                }
+            }
+
+            updateTransactionsList() {
+                const listContainer = document.getElementById('transactions-list');
+                const countEl = document.getElementById('transaction-count');
+                
+                if (!listContainer) return;
+
+                if (countEl) {
+                    countEl.textContent = `${this.transactions.length} transaction${this.transactions.length !== 1 ? 's' : ''}`;
+                }
+
+                if (this.transactions.length === 0) {
+                    listContainer.innerHTML = `
+                        <div class="empty-state">
+                            <p>📝 Add your first transaction to start tracking your finances with AI-powered categorization! 🤖</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const sortedTransactions = [...this.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                listContainer.innerHTML = sortedTransactions.map(t => `
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-description">${t.description}</div>
+                            <div class="transaction-meta">
+                                <span>📅 ${new Date(t.date).toLocaleDateString()}</span>
+                                <span>🏷️ ${t.category}</span>
+                                <span>🔄 ${t.type === 'income' ? '💰 Income' : '💸 Expense'}</span>
+                            </div>
+                        </div>
+                        <div class="transaction-amount ${t.type}">${this.formatCurrency(t.amount)}</div>
+                        <div class="transaction-actions">
+                            <button class="action-btn edit-btn" onclick="window.aiTransactionManager.editTransaction(${t.id})" title="Edit">✏️</button>
+                            <button class="action-btn delete-btn" onclick="window.aiTransactionManager.deleteTransaction(${t.id})" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            validateAmountField(field) {
+                const value = parseFloat(field.value);
+                if (isNaN(value) || value <= 0) {
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            }
+
+            showLoading(button) {
+                if (button) {
+                    button.disabled = true;
+                    button.classList.add('loading');
+                    button.querySelector('.btn-text').style.opacity = '0';
+                    button.querySelector('.btn-loading').style.display = 'inline-flex';
+                }
+            }
+
+            hideLoading(button) {
+                if (button) {
+                    button.disabled = false;
+                    button.classList.remove('loading');
+                    button.querySelector('.btn-text').style.opacity = '1';
+                    button.querySelector('.btn-loading').style.display = 'none';
+                }
+            }
+
+            updateAIStatus(message, status = 'ready') {
+                const statusElement = document.getElementById('ai-status');
+                const displayElement = document.getElementById('ai-status-display');
+                
+                if (statusElement) {
+                    statusElement.textContent = message;
+                }
+                
+                if (displayElement) {
+                    displayElement.className = `ai-status-display ${status}`;
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                // Remove existing notifications
+                document.querySelectorAll('.notification').forEach(n => n.remove());
+
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    ${message}
+                    <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+
+            updateElementText(id, text) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = text;
+                }
+            }
+
+            formatCurrency(amount) {
+                return `₹${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
+            }
+
+            // Storage methods
+            saveToStorage(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(data));
+                } catch (error) {
+                    console.error('Error saving to storage:', error);
+                }
+            }
+
+            loadFromStorage(key, defaultValue = []) {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : defaultValue;
+                } catch (error) {
+                    console.error('Error loading from storage:', error);
+                    return defaultValue;
+                }
+            }
+        }
+
+        // Initialize AI Transaction Manager when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Starting AI-Enhanced Personal Finance Application...');
+            window.aiTransactionManager = new AITransactionManager();
+        });
+    </script>
+</body>
+</html>

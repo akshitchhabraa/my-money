@@ -1,0 +1,62 @@
+Backend:
+Python: The core programming language
+
+Flask: Lightweight web framework used to build server, routes, APIs
+
+SQLite: Lightweight embedded relational database to store your data
+
+Jinja: Flask's templating engine to render dynamic HTML pages
+
+Frontend:
+HTML/CSS: Structure and style of webpages, with advanced glassmorphism and responsive design
+
+JavaScript: Interactive behavior like search, filtering, theme toggle, undo-redo
+
+Chart.js: JavaScript charting library for rendering analytics charts and graphs
+
+Responsive Design: Custom CSS for mobile-friendly, accessible UI
+
+Animations & Microinteractions: CSS transitions for smooth user experience
+
+Theme Toggle: Dark/Light mode implementation using CSS variables and JS
+
+Major	Core transaction management, customer and invoice tracking, analytics dashboards, search/filter, reports (manual), responsive UI, theme toggle, undo/redo, local testing
+Minor	Automated and scheduled reporting, AI categorization/predictions, production deployment & security, business intelligence, PWA features, third-party API integration
+
+🟢 Minor Project (This Semester)
+Focus on a fully functional, polished core app that demonstrates:
+
+Personal and Business Finance Management (CRUD operations)
+
+Basic Analytics dashboards with essential KPIs and charts
+
+Responsive User Interface with light/dark theme toggle
+
+Search, filter, and undo/redo functionalities
+
+Basic reporting features (manual CSV/PDF export, no automation)
+
+Local testing & mobile responsiveness
+
+Clear documentation and deployment instructions
+
+This will present a complete, usable app with solid features showing your full-stack skills.
+
+🔴 Major Project (Next Semester)
+Build on the minor project by adding advanced capabilities:
+
+Automated scheduled report generation with email delivery
+
+AI-powered auto categorization and spending predictions
+
+Full user authentication, multi-user support, and role-based access
+
+Cloud deployment (e.g., on Heroku or AWS) with HTTPS and security
+
+Advanced business intelligence features (customer segmentation, forecasting)
+
+Progressive Web App (PWA) enhancements for offline/mobile usage
+
+Real finance API integrations and payment gateway connections
+
+This will present a highly advanced, production-ready system showcasing deeper knowledge and complex features.

@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Reports - My Money</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .navbar {
+            padding: 20px 0;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        .page-header {
+            text-align: center;
+            padding: 50px 0;
+        }
+        
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        /* Report Types Grid */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .report-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 35px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .report-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee, #a855f7);
+        }
+        
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .report-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .report-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .report-description {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .report-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+        
+        .report-features li {
+            padding: 8px 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .report-features li::before {
+            content: '✓';
+            color: #4ade80;
+            font-weight: bold;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4ade80, #22d3ee);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 222, 128, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Report Configuration Panel */
+        .report-config {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 50px;
+            display: none;
+        }
+        
+        .report-config.show {
+            display: block;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .config-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .close-config {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .close-config:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .config-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .config-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4ade80;
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .checkbox-item input {
+            accent-color: #4ade80;
+        }
+        
+        .config-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        /* Recent Reports */
+        .recent-reports {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 50px;
+        }
+        
+        .recent-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .recent-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .recent-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .recent-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .recent-info h4 {
+            margin-bottom: 5px;
+        }
+        
+        .recent-meta {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .recent-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        /* Loading and Progress */
+        .report-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .report-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .report-modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .modal-message {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+        }
+        
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .generating {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Email Automation Panel */
+        .email-automation {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 50px;
+        }
+        
+        .automation-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 25px;
+        }
+        
+        .automation-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .automation-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-left: auto;
+        }
+        
+        .automation-toggle.active {
+            background: #4ade80;
+            border-color: #4ade80;
+        }
+        
+        .automation-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .page-title { font-size: 2.5rem; }
+            .reports-grid { grid-template-columns: 1fr; }
+            .container { padding: 0 15px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">💰 My Money</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Home</a>
+                <a href="/personal" class="nav-link">📊 Personal</a>
+                <a href="/personal/analytics" class="nav-link">📈 Analytics</a>
+                <a href="/business" class="nav-link">🏢 Business</a>
+                <a href="/reports" class="nav-link active">📋 Reports</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="report-progress" id="report-progress">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">📋 Advanced Reports</h1>
+            <p class="page-subtitle">Generate professional reports, automate delivery, and export in multiple formats</p>
+        </div>
+
+        <!-- Report Types Grid -->
+        <div class="reports-grid">
+            <!-- Monthly Financial Report -->
+            <div class="report-card" onclick="configureReport('monthly')">
+                <div class="report-icon">📊</div>
+                <h3 class="report-title">Monthly Financial Report</h3>
+                <p class="report-description">
+                    Comprehensive monthly summary with income, expenses, trends, and budget analysis
+                </p>
+                <ul class="report-features">
+                    <li>Income vs Expense Analysis</li>
+                    <li>Category-wise Breakdown</li>
+                    <li>Monthly Trend Charts</li>
+                    <li>Budget Performance</li>
+                    <li>Financial Health Score</li>
+                </ul>
+                <div class="report-actions">
+                    <button class="btn-primary" onclick="event.stopPropagation(); quickGenerate('monthly')">
+                        📄 Quick Generate
+                    </button>
+                    <button class="btn-secondary" onclick="event.stopPropagation(); configureReport('monthly')">
+                        ⚙️ Configure
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tax Report -->
+            <div class="report-card" onclick="configureReport('tax')">
+                <div class="report-icon">🧾</div>
+                <h3 class="report-title">Tax & Compliance Report</h3>
+                <p class="report-description">
+                    CA-ready tax reports with deductions, receipts, and compliance documentation
+                </p>
+                <ul class="report-features">
+                    <li>Tax-deductible Expenses</li>
+                    <li>Income Tax Summary</li>
+                    <li>Receipt Management</li>
+                    <li>Quarterly Breakdowns</li>
+                    <li>CA-ready Format</li>
+                </ul>
+                <div class="report-actions">
+                    <button class="btn-primary" onclick="event.stopPropagation(); quickGenerate('tax')">
+                        📄 Quick Generate
+                    </button>
+                    <button class="btn-secondary" onclick="event.stopPropagation(); configureReport('tax')">
+                        ⚙️ Configure
+                    </button>
+                </div>
+            </div>
+
+            <!-- Business Performance -->
+            <div class="report-card" onclick="configureReport('business')">
+                <div class="report-icon">🏢</div>
+                <h3 class="report-title">Business Performance Report</h3>
+                <p class="report-description">
+                    Detailed business insights with customer analysis, revenue trends, and KPIs
+                </p>
+                <ul class="report-features">
+                    <li>Revenue & Profit Analysis</li>
+                    <li>Customer Performance</li>
+                    <li>Outstanding Analysis</li>
+                    <li>Growth Metrics</li>
+                    <li>Comparative Analysis</li>
+                </ul>
+                <div class="report-actions">
+                    <button class="btn-primary" onclick="event.stopPropagation(); quickGenerate('business')">
+                        📄 Quick Generate
+                    </button>
+                    <button class="btn-secondary" onclick="event.stopPropagation(); configureReport('business')">
+                        ⚙️ Configure
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Analysis -->
+            <div class="report-card" onclick="configureReport('custom')">
+                <div class="report-icon">🔧</div>
+                <h3 class="report-title">Custom Analysis Report</h3>
+                <p class="report-description">
+                    Create custom reports with specific date ranges, categories, and metrics
+                </p>
+                <ul class="report-features">
+                    <li>Custom Date Ranges</li>
+                    <li>Specific Categories</li>
+                    <li>Comparative Periods</li>
+                    <li>Custom Charts</li>
+                    <li>Flexible Layouts</li>
+                </ul>
+                <div class="report-actions">
+                    <button class="btn-primary" onclick="event.stopPropagation(); quickGenerate('custom')">
+                        📄 Quick Generate
+                    </button>
+                    <button class="btn-secondary" onclick="event.stopPropagation(); configureReport('custom')">
+                        ⚙️ Configure
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Configuration Panel -->
+        <div class="report-config" id="report-config">
+            <div class="config-header">
+                <h3 class="config-title">
+                    <span id="config-icon">📊</span>
+                    <span id="config-title-text">Configure Monthly Report</span>
+                </h3>
+                <button class="close-config" onclick="closeConfig()">×</button>
+            </div>
+
+            <form class="config-form" id="config-form">
+                <div class="form-group">
+                    <label class="form-label">📅 Report Period</label>
+                    <select class="form-control" id="report-period">
+                        <option value="current-month">Current Month</option>
+                        <option value="last-month">Last Month</option>
+                        <option value="last-3-months">Last 3 Months</option>
+                        <option value="last-6-months">Last 6 Months</option>
+                        <option value="current-year">Current Year</option>
+                        <option value="last-year">Last Year</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📊 Report Format</label>
+                    <select class="form-control" id="report-format">
+                        <option value="pdf">📄 PDF Document</option>
+                        <option value="excel">📈 Excel Spreadsheet</option>
+                        <option value="csv">📋 CSV Data</option>
+                        <option value="html">🌐 Web Page</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="custom-date-range" style="display: none;">
+                    <label class="form-label">📅 From Date</label>
+                    <input type="date" class="form-control" id="from-date">
+                </div>
+
+                <div class="form-group" id="custom-date-range-to" style="display: none;">
+                    <label class="form-label">📅 To Date</label>
+                    <input type="date" class="form-control" id="to-date">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">💼 Include Sections</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include-summary" checked>
+                            <label for="include-summary">📋 Executive Summary</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include-charts" checked>
+                            <label for="include-charts">📊 Charts & Graphs</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include-transactions" checked>
+                            <label for="include-transactions">💰 Transaction Details</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include-categories" checked>
+                            <label for="include-categories">🏷️ Category Analysis</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include-trends" checked>
+                            <label for="include-trends">📈 Trend Analysis</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="include-recommendations">
+                            <label for="include-recommendations">💡 Recommendations</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📧 Delivery Options</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="email-delivery">
+                            <label for="email-delivery">📧 Email Report</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="save-cloud">
+                            <label for="save-cloud">☁️ Save to Cloud</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="auto-schedule">
+                            <label for="auto-schedule">⏰ Schedule Recurring</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-actions">
+                    <button type="button" class="btn-primary" onclick="generateReport()">
+                        🚀 Generate Report
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="previewReport()">
+                        👁️ Preview
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="saveTemplate()">
+                        💾 Save Template
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Email Automation -->
+        <div class="email-automation">
+            <div class="automation-header">
+                <h3 class="automation-title">
+                    📧 Email Automation
+                </h3>
+                <button class="automation-toggle" id="automation-toggle" onclick="toggleAutomation()">
+                    Enable
+                </button>
+            </div>
+
+            <div class="automation-settings" id="automation-settings" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">📧 Email Recipients</label>
+                    <input type="email" class="form-control" placeholder="your.email@example.com" id="email-recipients">
+                    <small style="opacity: 0.7; font-size: 0.85rem; margin-top: 5px; display: block;">
+                        Separate multiple emails with commas
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">⏰ Frequency</label>
+                    <select class="form-control" id="email-frequency">
+                        <option value="weekly">📅 Weekly</option>
+                        <option value="monthly" selected>📅 Monthly</option>
+                        <option value="quarterly">📅 Quarterly</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📊 Report Types</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="auto-monthly" checked>
+                            <label for="auto-monthly">📊 Monthly Summary</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="auto-business">
+                            <label for="auto-business">🏢 Business Report</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="auto-tax">
+                            <label for="auto-tax">🧾 Tax Updates</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📧 Email Template</label>
+                    <select class="form-control" id="email-template">
+                        <option value="professional">💼 Professional</option>
+                        <option value="detailed">📋 Detailed</option>
+                        <option value="summary">📝 Summary</option>
+                        <option value="custom">🎨 Custom</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="recent-reports">
+            <h3 class="recent-title">
+                📋 Recent Reports
+            </h3>
+
+            <div class="recent-list" id="recent-list">
+                <div class="recent-item">
+                    <div class="recent-info">
+                        <h4>📊 Monthly Financial Report - December 2024</h4>
+                        <div class="recent-meta">Generated 2 days ago • PDF • 2.4 MB</div>
+                    </div>
+                    <div class="recent-actions">
+                        <button class="action-btn" onclick="downloadReport('sample1')">📥 Download</button>
+                        <button class="action-btn" onclick="shareReport('sample1')">📤 Share</button>
+                        <button class="action-btn" onclick="regenerateReport('sample1')">🔄 Regenerate</button>
+                    </div>
+                </div>
+
+                <div class="recent-item">
+                    <div class="recent-info">
+                        <h4>🧾 Tax Report - Q4 2024</h4>
+                        <div class="recent-meta">Generated 5 days ago • Excel • 1.8 MB</div>
+                    </div>
+                    <div class="recent-actions">
+                        <button class="action-btn" onclick="downloadReport('sample2')">📥 Download</button>
+                        <button class="action-btn" onclick="shareReport('sample2')">📤 Share</button>
+                        <button class="action-btn" onclick="regenerateReport('sample2')">🔄 Regenerate</button>
+                    </div>
+                </div>
+
+                <div class="recent-item">
+                    <div class="recent-info">
+                        <h4>🏢 Business Performance - November 2024</h4>
+                        <div class="recent-meta">Generated 1 week ago • PDF • 3.2 MB</div>
+                    </div>
+                    <div class="recent-actions">
+                        <button class="action-btn" onclick="downloadReport('sample3')">📥 Download</button>
+                        <button class="action-btn" onclick="shareReport('sample3')">📤 Share</button>
+                        <button class="action-btn" onclick="regenerateReport('sample3')">🔄 Regenerate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Generation Modal -->
+    <div class="report-modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-icon generating">📊</div>
+            <h3 class="modal-title" id="modal-title">Generating Report...</h3>
+            <p class="modal-message" id="modal-message">
+                Please wait while we create your professional report with charts and analysis.
+            </p>
+            <div style="margin-top: 20px;">
+                <div class="btn-primary" id="modal-action" style="display: none;" onclick="closeModal()">
+                    ✅ Download Report
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ReportingSystem {
+            constructor() {
+                this.currentReportType = null;
+                this.reportTemplates = {
+                    monthly: {
+                        icon: '📊',
+                        title: 'Monthly Financial Report',
+                        sections: ['summary', 'charts', 'transactions', 'categories', 'trends']
+                    },
+                    tax: {
+                        icon: '🧾',
+                        title: 'Tax & Compliance Report',
+                        sections: ['summary', 'deductions', 'receipts', 'quarterly']
+                    },
+                    business: {
+                        icon: '🏢',
+                        title: 'Business Performance Report',
+                        sections: ['revenue', 'customers', 'growth', 'kpis']
+                    },
+                    custom: {
+                        icon: '🔧',
+                        title: 'Custom Analysis Report',
+                        sections: ['summary', 'charts', 'custom-metrics']
+                    }
+                };
+                
+                this.automationEnabled = localStorage.getItem('emailAutomation') === 'true';
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.loadAutomationSettings();
+                this.loadRecentReports();
+            }
+            
+            setupEventListeners() {
+                // Period change handler
+                document.getElementById('report-period').addEventListener('change', (e) => {
+                    this.toggleCustomDateRange(e.target.value === 'custom');
+                });
+                
+                // Format change handler
+                document.getElementById('report-format').addEventListener('change', (e) => {
+                    this.updateFormatOptions(e.target.value);
+                });
+            }
+            
+            configureReport(type) {
+                this.currentReportType = type;
+                const template = this.reportTemplates[type];
+                
+                document.getElementById('config-icon').textContent = template.icon;
+                document.getElementById('config-title-text').textContent = `Configure ${template.title}`;
+                
+                // Reset form
+                document.getElementById('config-form').reset();
+                this.toggleCustomDateRange(false);
+                
+                // Show specific sections for this report type
+                this.updateSectionOptions(type);
+                
+                document.getElementById('report-config').classList.add('show');
+                document.getElementById('report-config').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            updateSectionOptions(type) {
+                const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Set default sections based on report type
+                const defaults = {
+                    monthly: ['include-summary', 'include-charts', 'include-categories', 'include-trends'],
+                    tax: ['include-summary', 'include-transactions'],
+                    business: ['include-summary', 'include-charts', 'include-trends'],
+                    custom: ['include-summary', 'include-charts']
+                };
+                
+                defaults[type]?.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.checked = true;
+                });
+            }
+            
+            toggleCustomDateRange(show) {
+                const fromGroup = document.getElementById('custom-date-range');
+                const toGroup = document.getElementById('custom-date-range-to');
+                
+                if (show) {
+                    fromGroup.style.display = 'block';
+                    toGroup.style.display = 'block';
+                    
+                    // Set default dates
+                    const today = new Date();
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                    
+                    document.getElementById('from-date').value = lastMonth.toISOString().split('T')[0];
+                    document.getElementById('to-date').value = endOfLastMonth.toISOString().split('T')[0];
+                } else {
+                    fromGroup.style.display = 'none';
+                    toGroup.style.display = 'none';
+                }
+            }
+            
+            updateFormatOptions(format) {
+                // Update UI based on selected format
+                const formatMessages = {
+                    pdf: 'Professional PDF document with charts and formatting',
+                    excel: 'Excel spreadsheet with data and pivot tables',
+                    csv: 'Raw data in CSV format for analysis',
+                    html: 'Interactive web page with responsive design'
+                };
+                
+                // Could show format-specific options here
+                console.log(`Selected format: ${format} - ${formatMessages[format]}`);
+            }
+            
+            quickGenerate(type) {
+                this.currentReportType = type;
+                this.showProgress();
+                this.simulateReportGeneration(type);
+            }
+            
+            generateReport() {
+                if (!this.currentReportType) return;
+                
+                this.showProgress();
+                
+                // Get configuration
+                const config = this.getReportConfiguration();
+                console.log('Generating report with config:', config);
+                
+                // Close config panel
+                this.closeConfig();
+                
+                // Start generation
+                this.simulateReportGeneration(this.currentReportType, config);
+            }
+            
+            getReportConfiguration() {
+                return {
+                    period: document.getElementById('report-period').value,
+                    format: document.getElementById('report-format').value,
+                    fromDate: document.getElementById('from-date').value,
+                    toDate: document.getElementById('to-date').value,
+                    sections: {
+                        summary: document.getElementById('include-summary')?.checked,
+                        charts: document.getElementById('include-charts')?.checked,
+                        transactions: document.getElementById('include-transactions')?.checked,
+                        categories: document.getElementById('include-categories')?.checked,
+                        trends: document.getElementById('include-trends')?.checked,
+                        recommendations: document.getElementById('include-recommendations')?.checked
+                    },
+                    delivery: {
+                        email: document.getElementById('email-delivery')?.checked,
+                        cloud: document.getElementById('save-cloud')?.checked,
+                        schedule: document.getElementById('auto-schedule')?.checked
+                    }
+                };
+            }
+            
+            simulateReportGeneration(type, config = {}) {
+                const template = this.reportTemplates[type];
+                
+                // Show modal
+                document.getElementById('modal-title').textContent = `Generating ${template.title}...`;
+                document.getElementById('modal-message').textContent = 
+                    'Processing your financial data and creating professional charts...';
+                document.getElementById('report-modal').classList.add('show');
+                
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 100) progress = 100;
+                    
+                    document.getElementById('progress-bar').style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                        this.completeReportGeneration(type, config);
+                    }
+                }, 300);
+                
+                // Show progress bar
+                document.getElementById('report-progress').style.display = 'block';
+            }
+            
+            completeReportGeneration(type, config) {
+                const template = this.reportTemplates[type];
+                
+                // Hide progress
+                setTimeout(() => {
+                    document.getElementById('report-progress').style.display = 'none';
+                    document.getElementById('progress-bar').style.width = '0%';
+                }, 500);
+                
+                // Update modal
+                document.getElementById('modal-title').textContent = 'Report Generated Successfully!';
+                document.getElementById('modal-message').textContent = 
+                    `Your ${template.title} is ready for download. The report includes professional formatting and detailed analysis.`;
+                document.getElementById('modal-action').style.display = 'inline-block';
+                
+                // Add to recent reports
+                this.addToRecentReports(type, config);
+                
+                // Simulate download after delay
+                setTimeout(() => {
+                    this.downloadGeneratedReport(type, config);
+                }, 2000);
+            }
+            
+            addToRecentReports(type, config) {
+                const template = this.reportTemplates[type];
+                const now = new Date();
+                const report = {
+                    id: 'report_' + Date.now(),
+                    type: type,
+                    title: `${template.icon} ${template.title} - ${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
+                    date: now.toISOString(),
+                    format: config.format || 'pdf',
+                    size: (Math.random() * 3 + 0.5).toFixed(1) + ' MB'
+                };
+                
+                // Save to localStorage (in real app, save to database)
+                let recentReports = JSON.parse(localStorage.getItem('recentReports') || '[]');
+                recentReports.unshift(report);
+                recentReports = recentReports.slice(0, 10); // Keep only last 10
+                localStorage.setItem('recentReports', JSON.stringify(recentReports));
+                
+                this.loadRecentReports();
+            }
+            
+            loadRecentReports() {
+                const recentReports = JSON.parse(localStorage.getItem('recentReports') || '[]');
+                const container = document.getElementById('recent-list');
+                
+                if (recentReports.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; opacity: 0.7;">
+                            <h4>No reports generated yet</h4>
+                            <p>Generate your first report to see it here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = recentReports.map(report => `
+                    <div class="recent-item">
+                        <div class="recent-info">
+                            <h4>${report.title}</h4>
+                            <div class="recent-meta">
+                                Generated ${this.getRelativeTime(report.date)} • 
+                                ${report.format.toUpperCase()} • ${report.size}
+                            </div>
+                        </div>
+                        <div class="recent-actions">
+                            <button class="action-btn" onclick="reportingSystem.downloadReport('${report.id}')">📥 Download</button>
+                            <button class="action-btn" onclick="reportingSystem.shareReport('${report.id}')">📤 Share</button>
+                            <button class="action-btn" onclick="reportingSystem.regenerateReport('${report.id}')">🔄 Regenerate</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            getRelativeTime(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                
+                if (days === 0) return 'today';
+                if (days === 1) return '1 day ago';
+                if (days < 7) return `${days} days ago`;
+                if (days < 14) return '1 week ago';
+                if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+                return `${Math.floor(days / 30)} months ago`;
+            }
+            
+            downloadGeneratedReport(type, config) {
+                const template = this.reportTemplates[type];
+                const format = config.format || 'pdf';
+                
+                // In a real app, this would download the actual file
+                const filename = `${template.title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.${format}`;
+                
+                // Simulate file download
+                this.showNotification(`📥 ${filename} downloaded successfully!`, 'success');
+                
+                // Close modal after download
+                setTimeout(() => {
+                    this.closeModal();
+                }, 1500);
+            }
+            
+            // Email Automation
+            toggleAutomation() {
+                this.automationEnabled = !this.automationEnabled;
+                localStorage.setItem('emailAutomation', this.automationEnabled.toString());
+                
+                const toggle = document.getElementById('automation-toggle');
+                const settings = document.getElementById('automation-settings');
+                
+                if (this.automationEnabled) {
+                    toggle.textContent = 'Enabled';
+                    toggle.classList.add('active');
+                    settings.style.display = 'grid';
+                    this.showNotification('📧 Email automation enabled!', 'success');
+                } else {
+                    toggle.textContent = 'Enable';
+                    toggle.classList.remove('active');
+                    settings.style.display = 'none';
+                    this.showNotification('📧 Email automation disabled', 'info');
+                }
+            }
+            
+            loadAutomationSettings() {
+                if (this.automationEnabled) {
+                    document.getElementById('automation-toggle').textContent = 'Enabled';
+                    document.getElementById('automation-toggle').classList.add('active');
+                    document.getElementById('automation-settings').style.display = 'grid';
+                }
+            }
+            
+            // Report Actions
+            downloadReport(reportId) {
+                this.showNotification(`📥 Downloading report ${reportId}...`, 'info');
+                
+                // Simulate download delay
+                setTimeout(() => {
+                    this.showNotification('📥 Report downloaded successfully!', 'success');
+                }, 1000);
+            }
+            
+            shareReport(reportId) {
+                // In a real app, this would open sharing options
+                const shareUrl = `${window.location.origin}/reports/share/${reportId}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Financial Report',
+                        text: 'Check out my financial report',
+                        url: shareUrl
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        this.showNotification('📤 Share link copied to clipboard!', 'success');
+                    });
+                }
+            }
+            
+            regenerateReport(reportId) {
+                this.showNotification('🔄 Regenerating report with latest data...', 'info');
+                
+                // Simulate regeneration
+                setTimeout(() => {
+                    this.showNotification('✅ Report regenerated successfully!', 'success');
+                }, 2000);
+            }
+            
+            previewReport() {
+                if (!this.currentReportType) return;
+                
+                const template = this.reportTemplates[this.currentReportType];
+                this.showNotification(`👁️ Opening preview for ${template.title}...`, 'info');
+                
+                // In a real app, this would open a preview window
+                setTimeout(() => {
+                    window.open('/reports/preview', '_blank', 'width=1000,height=800');
+                }, 1000);
+            }
+            
+            saveTemplate() {
+                if (!this.currentReportType) return;
+                
+                const config = this.getReportConfiguration();
+                const templateName = prompt('Enter template name:');
+                
+                if (templateName) {
+                    // Save template to localStorage (in real app, save to database)
+                    let templates = JSON.parse(localStorage.getItem('reportTemplates') || '{}');
+                    templates[templateName] = {
+                        type: this.currentReportType,
+                        config: config,
+                        created: new Date().toISOString()
+                    };
+                    localStorage.setItem('reportTemplates', JSON.stringify(templates));
+                    
+                    this.showNotification(`💾 Template "${templateName}" saved successfully!`, 'success');
+                }
+            }
+            
+            // Modal and UI management
+            closeConfig() {
+                document.getElementById('report-config').classList.remove('show');
+            }
+            
+            closeModal() {
+                document.getElementById('report-modal').classList.remove('show');
+            }
+            
+            showProgress() {
+                document.getElementById('report-progress').style.display = 'block';
+                document.getElementById('progress-bar').style.width = '0%';
+            }
+            
+            showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(255, 255, 255, 0.12);
+                    backdrop-filter: blur(25px);
+                    border: 1px solid rgba(255, 255, 255, 0.25);
+                    border-radius: 15px;
+                    padding: 15px 20px;
+                    color: white;
+                    z-index: 1000;
+                    transform: translateX(400px);
+                    transition: transform 0.3s ease;
+                    max-width: 300px;
+                `;
+                
+                const colors = {
+                    success: '#4ade80',
+                    info: '#22d3ee',
+                    warning: '#f59e0b',
+                    error: '#f87171'
+                };
+                
+                if (colors[type]) {
+                    notification.style.borderLeftColor = colors[type];
+                    notification.style.borderLeftWidth = '4px';
+                }
+                
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                // Show notification
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Hide notification
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(400px)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 4000);
+            }
+        }
+        
+        // Global functions
+        function configureReport(type) {
+            window.reportingSystem.configureReport(type);
+        }
+        
+        function quickGenerate(type) {
+            window.reportingSystem.quickGenerate(type);
+        }
+        
+        function closeConfig() {
+            window.reportingSystem.closeConfig();
+        }
+        
+        function generateReport() {
+            window.reportingSystem.generateReport();
+        }
+        
+        function previewReport() {
+            window.reportingSystem.previewReport();
+        }
+        
+        function saveTemplate() {
+            window.reportingSystem.saveTemplate();
+        }
+        
+        function toggleAutomation() {
+            window.reportingSystem.toggleAutomation();
+        }
+        
+        function closeModal() {
+            window.reportingSystem.closeModal();
+        }
+        
+        function downloadReport(id) {
+            window.reportingSystem.downloadReport(id);
+        }
+        
+        function shareReport(id) {
+            window.reportingSystem.shareReport(id);
+        }
+        
+        function regenerateReport(id) {
+            window.reportingSystem.regenerateReport(id);
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            window.reportingSystem = new ReportingSystem();
+        });
+    </script>
+</body>
+</html>
